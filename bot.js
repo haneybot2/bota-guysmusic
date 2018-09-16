@@ -52,7 +52,8 @@ client.on('message', async msg => {
     if (msg.author.bot) return undefined;
     if (!msg.content.startsWith(prefix)) return undefined;
 
-    const args = msg.content.split(' ');
+    const args = msg.content.split(' ').slice(prefix.length).trim();
+    const command = args.shift().toLowerCase();
     const searchString = args.slice(1).join(' ');
     const url = args[1] ? args[1].replace(/<(.+)>/g, '$1') : '';
     const serverQueue = queue.get(msg.guild.id);
@@ -65,9 +66,7 @@ client.on('message', async msg => {
       resume: { cmd: 'resume' },
       volume: { cmd: 'volume', a: ['vol'] },
       queue: { cmd: 'queue', a: ['q'] },
-      repeat: { cmd: 'repeat', a: ['re'] },
-      skip: { cmd: 'skip', a: ['reskip'] },
-      skip: { cmd: 'skip', a: ['st'] }
+      repeat: { cmd: 'repeat', a: ['re'] }
     };
 
   Object.keys(cmds).forEach(key => {
