@@ -57,7 +57,7 @@ client.on('message', async msg => {
     const searchString = args.slice(1).join(' ');
     const url = args[1] ? args[1].replace(/<(.+)>/g, '$1') : '';
     const serverQueue = queue.get(msg.guild.id);
-	var args1 = message.content.toLowerCase().split(" ");
+	const args1 = message.content.toLowerCase().split(" ");
 	
     let cmds = {
       play: { cmd: 'play', a: ['p'] },
@@ -88,7 +88,6 @@ client.on('message', async msg => {
 	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${prefix}play command in ${msg.guild.name}`);
         const voiceChannel = msg.member.voiceChannel;
-        let args1 = msg.content.split(' ').slice(1);
         if (!voiceChannel) return msg.channel.send(":x:** You need to be in a voice channel**!");
 		const permissions = voiceChannel.permissionsFor(msg.client.user);
 		if (!permissions.has('CONNECT')) {
@@ -149,21 +148,21 @@ client.on('message', async msg => {
         console.log(`${msg.author.tag} has been used the ${prefix}skip command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
         if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could skip for you.**").then(message =>{message.delete(5000)})
-	if (serverQueue.repeating) return msg.channel.send(`**You can\'t skip, because repeating mode is on, run \`\`${prefix}repeat\`\` to turn off.**`);
-	if (args[0] === '') {
+		if (queue.repeating) return msg.channel.send(`**You can\'t skip, because repeating mode is on, run \`\`${prefix}repeat\`\` to turn off.**`);
+		if (args[0] === '') {
         serverQueue.connection.dispatcher.end();
-	serverQueue.voiceChannel.leave();
-	}
-	if (parseInt(!args[0] > 1000 && args[0] < 1)) {
-	if (!serverQueue.songs || serverQueue.songs < 2) return msg.channel.send('**There is nothing playing to skip to.**');
-	let sN = parseInt(args[0]) - 1;
+		serverQueue.voiceChannel.leave();
+		}
+		if (parseInt(!args1[1] > 1000 && args1[1] < 1)) {
+		if (!serverQueue.songs || serverQueue.songs < 2) return msg.channel.send('**There is nothing playing to skip to.**');
+		let sN = parseInt(args1[1]) - 1;
         if (!serverQueue.songs[sN]) return msg.channel.send('**There is no song with this number.**');
         while (0 < sN) {
          serverQueue.songs.shift();
         }
         msg.channel.send(`:white_check_mark: .A-Music playing **${serverQueue.songs[0].title}**`);
         serverQueue.connection.dispatcher.end('SkippingTo..');
-	}
+		}
         return undefined;
     } else if (cmd === 'stop') {
         if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
