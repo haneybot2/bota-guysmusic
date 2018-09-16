@@ -171,6 +171,7 @@ client.on('message', async msg => {
         console.log(`${msg.author.tag} has been used the ${prefix}stop command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
         if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could stop for you.**").then(message =>{message.delete(5000)})
+        serverQueue.voiceChannel.leave();
         serverQueue.songs = [];
         serverQueue.connection.dispatcher.end('Stop command has been used!');
         return msg.channel.send('k :cry:');
@@ -292,8 +293,8 @@ function play(guild, song) {
     const serverQueue = queue.get(guild.id);
 
     if (!song) {
-        serverQueue.voiceChannel.leave();
         queue.delete(guild.id);
+	serverQueue.textChannel.send(`:stop_button: **.A-Queue** finished!!`);
         return;
     }
 	
@@ -311,7 +312,6 @@ function play(guild, song) {
                 if(serverQueue.repeating) return play(guild, serverQueue.songs[0])
                 serverQueue.songs.shift();
                 play(guild, serverQueue.songs[0]);
-		serverQueue.textChannel.send(`:stop_button: **.A-Queue** finished!!`);
         })
         .on('error', error => console.log(error));
     dispatcher.setVolumeLogarithmic(serverQueue.volume / 200);
