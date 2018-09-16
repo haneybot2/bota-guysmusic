@@ -57,7 +57,6 @@ client.on('message', async msg => {
     const searchString = args.slice(1).join(' ');
     const url = args[1] ? args[1].replace(/<(.+)>/g, '$1') : '';
     const serverQueue = queue.get(msg.guild.id);
-	const args1 = message.content.toLowerCase().split(" ");
 	
     let cmds = {
       play: { cmd: 'play', a: ['p'] },
