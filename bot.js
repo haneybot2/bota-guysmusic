@@ -57,6 +57,7 @@ client.on('message', async msg => {
     const searchString = args.slice(1).join(' ');
     const url = args[1] ? args[1].replace(/<(.+)>/g, '$1') : '';
     const serverQueue = queue.get(msg.guild.id);
+	var args1 = message.content.toLowerCase().split(" ");
 	
     let cmds = {
       play: { cmd: 'play', a: ['p'] },
@@ -96,7 +97,7 @@ client.on('message', async msg => {
 		if (!permissions.has('SPEAK')) {
 			return msg.channel.send("**I can not speak in this room, please make sure that i have full perms for this**!");
                 }
-	        if (!args < 0) return msg.channel.send('**:x: Please specify a filename.**');
+	    if (!args[0] === '') return msg.channel.send('**:x: Please specify a filename.**');
 
         
         if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
@@ -117,7 +118,7 @@ client.on('message', async msg => {
                     let index = 0;
                     const embed1 = new Discord.RichEmbed()
 		    .setColor('BLACK')
-                    .setAuthor(`.A-Music`, `https://goo.gl/jHxBTt`)
+            .setAuthor(`.A-Music`, `https://goo.gl/jHxBTt`)
 		    .setTitle(`**Song selection** :`)
                     .setDescription(`${videos.map(video2 => `[**${++index} **] \`${video2.title}\``).join('\n')}`);
 			
@@ -148,32 +149,30 @@ client.on('message', async msg => {
         console.log(`${msg.author.tag} has been used the ${prefix}skip command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
         if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could skip for you.**").then(message =>{message.delete(5000)})
-	if (serverQueue.repeating) {
-        serverQueue.repeating = false;
-        serverQueue.connection.dispatcher.end('ForceSkipping..')
-        serverQueue.repeating = true;
-        } else {
-        serverQueue.connection.dispatcher.end('ForceSkipping..')
-        }
 	if (serverQueue.repeating) return msg.channel.send(`**You can\'t skip, because repeating mode is on, run \`\`${prefix}repeat\`\` to turn off.**`);
-        if (!args[0] || isNaN(args[0])) return msg.channel.send(`**Please input song number to skip to it, run \`\`${queue}queue\`\` to see songs numbers.**`);
-        let sN = parseInt(args[0]) - 1;
-        if(!serverQueue.songs[sN]) return msg.channel.send('**There is no song with this number.**');
+	if (args[0] === '') {
+        serverQueue.connection.dispatcher.end();
+	serverQueue.voiceChannel.leave();
+	}
+	if (parseInt(!args[0] > 1000 && args[0] < 1)) {
+	if (!serverQueue.songs || serverQueue.songs < 2) return msg.channel.send('**There is nothing playing to skip to.**');
+	let sN = parseInt(args[0]) - 1;
+        if (!serverQueue.songs[sN]) return msg.channel.send('**There is no song with this number.**');
         while (0 < sN) {
          serverQueue.songs.shift();
         }
-        msg.channel.send(`Skipped to: **${serverQueue.songs[0].title}[${queue.songs[0].duration}]**`)
-        serverQueue.connection.dispatcher.end('SkippingTo..')
-        serverQueue.connection.dispatcher.end();
+        msg.channel.send(`:white_check_mark: .A-Music playing **${serverQueue.songs[0].title}**`);
+        serverQueue.connection.dispatcher.end('SkippingTo..');
+	}
         return undefined;
     } else if (cmd === 'stop') {
         if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${prefix}stop command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
         if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could stop for you.**").then(message =>{message.delete(5000)})
-        serverQueue.voiceChannel.leave();
         serverQueue.songs = [];
         serverQueue.connection.dispatcher.end('Stop command has been used!');
+        serverQueue.voiceChannel.leave();
         return msg.channel.send('k :cry:');
     } else if (cmd === 'repeat') {
         if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
@@ -204,16 +203,16 @@ client.on('message', async msg => {
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
         if (!serverQueue) return msg.channel.send(':information_source: **There is nothing playing.**').then(message =>{message.delete(5000)})
         if (!args[0]) return msg.channel.send(`:speaker: **Current volume is:** ${serverQueue.volume}`)
-        if (parseInt(args[0]) > 200) return msg.channel.send('**You can\'t set the volume more than `200`.**')
+        if (parseInt(args[0]) > 200) return msg.channel.send('**You can\'t set the volume more than `200`.**');
         serverQueue.volume = args[0];
         serverQueue.connection.dispatcher.setVolumeLogarithmic(serverQueue.volume / 200);
-        return msg.channel.send(`:loud_sound: **Volume:** ${args}`);
+        return msg.channel.send(`:loud_sound: **Volume:** ${serverQueue.volume}`);
     } else if (cmd === 'queue') {
         if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${prefix}queue command in ${msg.guild.name}`);
         if (!serverQueue) return msg.channel.send(':information_source: **no_more_Queue.**').then(message =>{message.delete(5000)});
         let index = 0;
-const embedqu = new Discord.RichEmbed()
+		const embedqu = new Discord.RichEmbed()
 .setAuthor(`.A-Queue`, `https://goo.gl/jHxBTt`)
 .setTitle("**.A-Queue List :**")
 .addField('__Now Playing__  :musical_note: ' , `**${serverQueue.songs[0].title}**`,true)
@@ -238,11 +237,10 @@ const embedqu = new Discord.RichEmbed()
             return msg.channel.send('k :slight_smile:');
         }
         return msg.channel.send(':information_source: **There is nothing playing.**').then(message =>{message.delete(5000)})
-    } 
+	}
 
-    return undefined;
+	return undefined;
 });
-
 
 async function handleVideo(video, msg, voiceChannel, playlist = false) {
     const serverQueue = queue.get(msg.guild.id);
@@ -255,7 +253,7 @@ async function handleVideo(video, msg, voiceChannel, playlist = false) {
         const song = {
             id: video.id,
             title: Util.escapeMarkdown(video.title),
-	    duration: dur,
+			duration: dur,
             url: `https://www.youtube.com/watch?v=${video.id}`
         };
         if (!serverQueue) {
@@ -266,7 +264,7 @@ async function handleVideo(video, msg, voiceChannel, playlist = false) {
                 songs: [],
 		volume: 150,
                 playing: true,
-	        repeating: false
+		repeating: false
             };
             queue.set(msg.guild.id, queueConstruct);
 
@@ -294,7 +292,6 @@ function play(guild, song) {
 
     if (!song) {
         queue.delete(guild.id);
-	serverQueue.textChannel.send(`:stop_button: **.A-Queue** finished!!`);
         return;
     }
 	
@@ -302,16 +299,20 @@ function play(guild, song) {
     if(serverQueue.repeating) {
     serverQueue.textChannel.send(`:white_check_mark: .A-Repeat playing **${song.title}**`);
     } else {
-    serverQueue.textChannel.send(`:white_check_mark: .A-Music playing **${song.title}**`)
+	  serverQueue.textChannel.send(`:white_check_mark: .A-Music playing **${song.title}**`)
     }
+  
+    if(serverQueue.finished) {
+    serverQueue.textChannel.send(`:stop_button: **.A-Queue** finished!!`);
+    } 
 
     const dispatcher = serverQueue.connection.playStream(ytdl(song.url))
 		.on('end', reason => {
-		if (reason === 'Stream is not generating quickly enough.') console.log('Song ended.');
-		else console.log(reason);
-                if(serverQueue.repeating) return play(guild, serverQueue.songs[0])
-                serverQueue.songs.shift();
-                play(guild, serverQueue.songs[0]);
+			if (reason === 'Stream is not generating quickly enough.') console.log('Song ended.');
+			else console.log(reason);
+            		if(serverQueue.repeating) return play(guild, serverQueue.songs[0])
+		        serverQueue.songs.shift();
+        	        play(guild, serverQueue.songs[0]);
         })
         .on('error', error => console.log(error));
     dispatcher.setVolumeLogarithmic(serverQueue.volume / 200);
