@@ -96,7 +96,7 @@ client.on('message', async msg => {
 		if (!permissions.has('SPEAK')) {
 			return msg.channel.send("**I can not speak in this room, please make sure that i have full perms for this**!");
                 }
-	        if (!args < 1) return msg.channel.send('**:x: Please specify a filename.**');
+	        if (!args < 0) return msg.channel.send('**:x: Please specify a filename.**');
 
         
         if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
