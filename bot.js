@@ -96,7 +96,7 @@ client.on('message', async msg => {
 		if (!permissions.has('SPEAK')) {
 			return msg.channel.send("**I can not speak in this room, please make sure that i have full perms for this**!");
                 }
-	        if (!args) return msg.channel.send('**:x: Please specify a filename.**');
+	        if (!args < 1) return msg.channel.send('**:x: Please specify a filename.**');
 
         
         if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
@@ -190,7 +190,7 @@ client.on('message', async msg => {
         if (parseInt(args[0]) > 200) return msg.channel.send('**You can\'t set the volume more than `200`.**')
         serverQueue.volume = args[0];
         serverQueue.connection.dispatcher.setVolumeLogarithmic(serverQueue.volume / 200);
-        return msg.channel.send(`:loud_sound: **Volume:** ${args[0]}`);
+        return msg.channel.send(`:loud_sound: **Volume:** ${args}`);
     } else if (cmd === 'queue') {
         if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${prefix}queue command in ${msg.guild.name}`);
@@ -271,8 +271,9 @@ async function handleVideo(video, msg, voiceChannel, playlist = false) {
                 voiceChannel: voiceChannel,
                 connection: null,
                 songs: [],
+		volume: 50,
                 playing: true,
-				        repeating: false
+		repeating: false
             };
             queue.set(msg.guild.id, queueConstruct);
 
