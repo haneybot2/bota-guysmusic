@@ -147,14 +147,14 @@ client.on('message', async msg => {
             return handleVideo(video, msg, voiceChannel);
         }
     } else if (cmd === 'skip') {
-	   if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
+        if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${prefix}skip command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
         if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could skip for you.**").then(message =>{message.delete(5000)})
         serverQueue.connection.dispatcher.end();
         return undefined;
     } else if (cmd === 'stop') {
-	    if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
+        if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${prefix}stop command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
         if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could stop for you.**").then(message =>{message.delete(5000)})
@@ -162,7 +162,7 @@ client.on('message', async msg => {
         serverQueue.connection.dispatcher.end('Stop command has been used!');
         return msg.channel.send('k :cry:');
     } else if (cmd === 'repeat') {
-	    if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
+        if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${prefix}repeat command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
         if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could repeat for you.**").then(message =>{message.delete(5000)})
@@ -173,41 +173,41 @@ client.on('message', async msg => {
         serverQueue.repeating = true;
         return msg.channel.send(':arrows_counterclockwise: **Repeating Mode** (`True`)');
         };
-	    return undefined;
+        return undefined;
     } else if (cmd === 'join') {
-	    if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
+        if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${prefix}join command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
 	const voiceChannel = msg.member.voiceChannel
 	voiceChannel.join().then(connection => console.log('joind to voiceChannel!')).catch(error =>{
 	console.error(`I could not join the voice channel: **${error}**`);
         return msg.channel.send(`I could not join the voice channel: **${error}**!`);
-	    });
+        });
         return msg.channel.send('**:white_check_mark: Joind.**');
     } else if (cmd === 'volume') {
-	    if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
+        if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${prefix}volume command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
         if (!serverQueue) return msg.channel.send(':information_source: **There is nothing playing.**').then(message =>{message.delete(5000)})
         if (!args[0]) return msg.channel.send(`:speaker: **Current volume is:** ${serverQueue.volume}`)
-		if (parseInt(args[0]) > 200) return msg.channel.send('**You can\'t set the volume more than `200`.**')
+        if (parseInt(args[0]) > 200) return msg.channel.send('**You can\'t set the volume more than `200`.**')
         serverQueue.volume = args[0];
         serverQueue.connection.dispatcher.setVolumeLogarithmic(serverQueue.volume / 200);
         return msg.channel.send(`:loud_sound: **Volume:** ${args[0]}`);
     } else if (cmd === 'queue') {
-	    if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
+        if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${prefix}queue command in ${msg.guild.name}`);
         if (!serverQueue) return msg.channel.send(':information_source: **no_more_Queue.**').then(message =>{message.delete(5000)});
-	    let index = 0;
-	const embedqu = new Discord.RichEmbed()
-	.setAuthor(`.A-Queue`, `https://goo.gl/jHxBTt`)
-	.setTitle("**.A-Queue List :**")
-	.addField('__Now Playing__  :musical_note: ' , `**${serverQueue.songs[0].title}**`,true)
-	.addField(':musical_score:  __UP NEXT__ :musical_score: ' , `${serverQueue.songs.map(song => `**[${++index}] -** ${song.title}`).join('\n')}`)
-	.setFooter(`#skip [number]`)
+        let index = 0;
+const embedqu = new Discord.RichEmbed()
+.setAuthor(`.A-Queue`, `https://goo.gl/jHxBTt`)
+.setTitle("**.A-Queue List :**")
+.addField('__Now Playing__  :musical_note: ' , `**${serverQueue.songs[0].title}**`,true)
+.addField(':musical_score:  __UP NEXT__ :musical_score: ' , `${serverQueue.songs.map(song => `**[${++index}] -** ${song.title}`).join('\n')}`)
+.setFooter(`#skip [number]`)
     	return msg.channel.sendEmbed(embedqu);
      }  else if (cmd === 'pause') {
-	    if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
+        if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${prefix}pause command in ${msg.guild.name}`);
         if (serverQueue && serverQueue.playing) {
         serverQueue.playing = false;
@@ -216,7 +216,7 @@ client.on('message', async msg => {
         }
         return msg.channel.send(':information_source: **There is nothing playing.**').then(message =>{message.delete(5000)})
     } else if (cmd === 'resume') {
-	    if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
+	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${prefix}resume command in ${msg.guild.name}`);
         if (serverQueue && !serverQueue.playing) {
             serverQueue.playing =  true;
@@ -225,7 +225,7 @@ client.on('message', async msg => {
         }
         return msg.channel.send(':information_source: **There is nothing playing.**').then(message =>{message.delete(5000)})
     } else if (cmd === 'skip') {
-	    if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
+        if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${prefix}skip repeat command in ${msg.guild.name}`);
         if (serverQueue.repeating) {
         serverQueue.repeating = false;
@@ -234,9 +234,9 @@ client.on('message', async msg => {
         } else {
         serverQueue.connection.dispatcher.end('ForceSkipping..')
         }
-		return undefined;
+        return undefined;
     } else if (cmd === 'skip') {
-	    if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
+        if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${prefix}skip queue  command in ${msg.guild.name}`);
         if (serverQueue.repeating) return msg.channel.send(`**You can\'t skip, because repeating mode is on, run \`\`${prefix}repeat\`\` to turn off.**`);
         if (!args[0] || isNaN(args[0])) return msg.channel.send(`**Please input song number to skip to it, run \`\`${queue}queue\`\` to see songs numbers.**`);
@@ -247,7 +247,7 @@ client.on('message', async msg => {
         }
         msg.channel.send(`Skipped to: **${serverQueue.songs[0].title}[${queue.songs[0].duration}]**`)
         serverQueue.connection.dispatcher.end('SkippingTo..')
-		return undefined;
+        return undefined;
     }
 
     return undefined;
