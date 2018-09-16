@@ -57,7 +57,7 @@ client.on('message', async msg => {
     const searchString = args.slice(1).join(' ');
     const url = args[1] ? args[1].replace(/<(.+)>/g, '$1') : '';
     const serverQueue = queue.get(msg.guild.id);
-	const args1 = msg.content.toLowerCase().split(" ");
+	const args1 = message.content.toLowerCase().split(" ");
 	
     let cmds = {
       play: { cmd: 'play', a: ['p'] },
@@ -171,7 +171,6 @@ client.on('message', async msg => {
         if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could stop for you.**").then(message =>{message.delete(5000)})
         serverQueue.songs = [];
         serverQueue.connection.dispatcher.end('Stop command has been used!');
-        serverQueue.voiceChannel.leave();
         return msg.channel.send('k :cry:');
     } else if (cmd === 'repeat') {
         if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
@@ -210,12 +209,19 @@ client.on('message', async msg => {
         if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${prefix}queue command in ${msg.guild.name}`);
         if (!serverQueue) return msg.channel.send(':information_source: **no_more_Queue.**').then(message =>{message.delete(5000)});
+		let hrs = video.duration.hours == 1 ? (video.duration.hours > 9 ? `${video.duration.hours}:` : `0${video.duration.hours}:`) : '';
+		let min = video.duration.minutes > 9 ? `${video.duration.minutes}:` : `0${video.duration.minutes}:`;
+		let sec = video.duration.seconds > 9 ? `${video.duration.seconds}` : `0${video.duration.seconds}`;
+		let dur = `${hrs}${min}${sec}`
+		const song = {
+        duration: dur,
+		};
         let index = 0;
 		const embedqu = new Discord.RichEmbed()
 .setAuthor(`.A-Queue`, `https://goo.gl/jHxBTt`)
 .setTitle("**.A-Queue List :**")
 .addField('__Now Playing__  :musical_note: ' , `**${serverQueue.songs[0].title}**`,true)
-.addField(':musical_score:  __UP NEXT__ :musical_score: ' , `${serverQueue.songs.map(song => `**[${++index}] -** ${song.title}`).join('\n')}`)
+.addField(':musical_score:  __UP NEXT__ :musical_score: ' , `${serverQueue.songs.map(song => `**[${++index}] -** ${song.title}(\`\`${song.duration}\`\`)`).join('\n')}`)
 .setFooter(`#skip [number]`)
     	return msg.channel.sendEmbed(embedqu);
      }  else if (cmd === 'pause') {
@@ -243,7 +249,9 @@ client.on('message', async msg => {
 
 async function handleVideo(video, msg, voiceChannel, playlist = false) {
     const serverQueue = queue.get(msg.guild.id);
-	
+		console.log(video);
+        console.log('yao: ' + Util.escapeMarkdown(video.thumbnailUrl));
+		
         let hrs = video.duration.hours == 1 ? (video.duration.hours > 9 ? `${video.duration.hours}:` : `0${video.duration.hours}:`) : '';
         let min = video.duration.minutes > 9 ? `${video.duration.minutes}:` : `0${video.duration.minutes}:`;
         let sec = video.duration.seconds > 9 ? `${video.duration.seconds}` : `0${video.duration.seconds}`;
@@ -261,7 +269,7 @@ async function handleVideo(video, msg, voiceChannel, playlist = false) {
                 voiceChannel: voiceChannel,
                 connection: null,
                 songs: [],
-		volume: 150,
+		volume: 50,
                 playing: true,
 		repeating: false
             };
@@ -279,9 +287,10 @@ async function handleVideo(video, msg, voiceChannel, playlist = false) {
                 return msg.channel.send(`I could not join the voice channel: **${error}**!`);
             }
         } else {
-            serverQueue.songs.push(song);
-            if (playlist) return undefined;
-		else return msg.channel.send(`:white_check_mark: \`\`${song.title}\`\` Added to **.A-Queue**!`)
+			serverQueue.songs.push(song);
+			console.log(serverQueue.songs);
+			if (playlist) return undefined;
+			else return msg.channel.send(`:white_check_mark: \`\`${song.title}\`\` Added to **.A-Queue**!`)
         }
         return undefined;
 }
@@ -289,32 +298,28 @@ async function handleVideo(video, msg, voiceChannel, playlist = false) {
 function play(guild, song) {
     const serverQueue = queue.get(guild.id);
 
-    if (!song) {
-        queue.delete(guild.id);
-        return;
-    }
-	
+	if (!song) {
+		serverQueue.voiceChannel.leave();
+		queue.delete(guild.id);
+		return;
+	}
 	console.log(serverQueue.songs);
+	
     if(serverQueue.repeating) {
     serverQueue.textChannel.send(`:white_check_mark: .A-Repeat playing **${song.title}**`);
     } else {
 	  serverQueue.textChannel.send(`:white_check_mark: .A-Music playing **${song.title}**`)
     }
-  
-    if(serverQueue.finished) {
-    serverQueue.textChannel.send(`:stop_button: **.A-Queue** finished!!`);
-    } 
 
-    const dispatcher = serverQueue.connection.playStream(ytdl(song.url))
+	const dispatcher = serverQueue.connection.playStream(ytdl(song.url))
 		.on('end', reason => {
 			if (reason === 'Stream is not generating quickly enough.') console.log('Song ended.');
 			else console.log(reason);
-            		if(serverQueue.repeating) return play(guild, serverQueue.songs[0])
-		        serverQueue.songs.shift();
-        	        play(guild, serverQueue.songs[0]);
-        })
-        .on('error', error => console.log(error));
-    dispatcher.setVolumeLogarithmic(serverQueue.volume / 200);
+			serverQueue.songs.shift();
+			play(guild, serverQueue.songs[0]);
+		})
+		.on('error', error => console.error(error));
+	dispatcher.setVolumeLogarithmic(serverQueue.volume / 200);
 
 }
 
