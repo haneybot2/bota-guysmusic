@@ -295,10 +295,7 @@ let dur = `${hrs}${min}${sec}`
         } else {
             serverQueue.songs.push(song);
             if (playlist) return undefined;
-            else return msg.channel.send(`:white_check_mark: \`\`${song.title}\`\`(\`\`${song.duration}\`\`) Added to **.A-Queue**!`).then(msg => {
-                        msg.delete(3500);
-                        message.delete(3500);
-                        });
+            else return msg.channel.send(`:white_check_mark: \`\`${song.title}\`\`(\`\`${song.duration}\`\`) Added to **.A-Queue**!`);
         }
         return undefined;
 }
@@ -316,10 +313,7 @@ function play(guild, song, msg, message) {
     if (serverQueue.repeating) {
     serverQueue.textChannel.send(`:white_check_mark: .A-Repeating playing **${song.title}**`);
     } else {
-	serverQueue.textChannel.send(`:white_check_mark: .A-Music playing **${song.title}**`).then(msg => {
-        msg.delete(3500);
-        message.delete(3500);
-      });
+	serverQueue.textChannel.send(`:white_check_mark: .A-Music playing **${song.title}**`);
     }
 	
 	const dispatcher = serverQueue.connection.playStream(ytdl(song.url))
