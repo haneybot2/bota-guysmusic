@@ -225,8 +225,7 @@ client.on('message', async msg => {
 	if (serverQueue.repeating = true){
 	serverQueue.repeating = false;
 	serverQueue.connection.dispatcher.end('ForceSkipping..')
-	}
-	if (serverQueue.repeating = false){
+	} else {
         serverQueue.connection.dispatcher.end('Skip command has been used!');
 	}
         return undefined;
