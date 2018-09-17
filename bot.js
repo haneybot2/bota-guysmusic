@@ -182,7 +182,7 @@ client.on('message', async msg => {
         let sec = video.duration.seconds > 9 ? `${video.duration.seconds}` : `0${video.duration.seconds}`;
         let dur = `${hrs}${min}${sec}`
         const song = {
-              duration: dur,
+              duration: dur
 	  };
 	  let index = 0;
         const embedqu = new Discord.RichEmbed()
@@ -232,7 +232,7 @@ client.on('message', async msg => {
         let sec = video.duration.seconds > 9 ? `${video.duration.seconds}` : `0${video.duration.seconds}`;
         let dur = `${hrs}${min}${sec}`
 	const song = {
-          duration: dur,
+          duration: dur
 	};
 	if(serverQueue.repeating) return msg.channel.send(`You can\'t skip it, because repeating mode is on, run \`\`${PREFIX}queue\`\``);
 	if(parseInt(textxt[0]) > 500) return undefined;
