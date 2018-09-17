@@ -177,10 +177,6 @@ client.on('message', async msg => {
 	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}queue command in ${msg.guild.name}`);
         if (!serverQueue) return msg.channel.send(':information_source: **no_more_Queue.**').then(message =>{message.delete(5000)});
-	let hrs = video.duration.hours == 1 ? (video.duration.hours > 9 ? `${video.duration.hours}:` : `0${video.duration.hours}:`) : '';
-        let min = video.duration.minutes > 9 ? `${video.duration.minutes}:` : `0${video.duration.minutes}:`;
-        let sec = video.duration.seconds > 9 ? `${video.duration.seconds}` : `0${video.duration.seconds}`;
-        let dur = `${hrs}${min}${sec}`
 	  let index = 0;
         const embedqu = new Discord.RichEmbed()
         .setAuthor(`.A-Queue`, `https://goo.gl/jHxBTt`)
@@ -201,7 +197,7 @@ client.on('message', async msg => {
           let n = conv.toWords(i+1)
           num = `:${n}:`
         }
-        text += `**[${++index}] -** ${serverQueue.songs[i].title} \`\`[${dur}]\`\` \n`
+        text += `**[${++index}] -** ${serverQueue.songs[i].title} \n`
         }
         embedqu.addField(':musical_score:  __UP NEXT__ :musical_score: ' , `${text}`)
 	embedqu.setFooter('#skip [number]');
