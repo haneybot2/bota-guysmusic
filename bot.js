@@ -220,13 +220,6 @@ client.on('message', async msg => {
         console.log(`${msg.author.tag} has been used the ${PREFIX}skip command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
         if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could skip for you.**").then(message =>{message.delete(5000)})
-	let hrs = video.duration.hours == 1 ? (video.duration.hours > 9 ? `${video.duration.hours}:` : `0${video.duration.hours}:`) : '';
-        let min = video.duration.minutes > 9 ? `${video.duration.minutes}:` : `0${video.duration.minutes}:`;
-        let sec = video.duration.seconds > 9 ? `${video.duration.seconds}` : `0${video.duration.seconds}`;
-        let dur = `${hrs}${min}${sec}`
-	const song = {
-          duration: dur
-	};
 	if(serverQueue.repeating) return msg.channel.send(`You can\'t skip it, because repeating mode is on, run \`\`${PREFIX}queue\`\``);
 	if(parseInt(textxt[0]) > 500) return undefined;
 	if (text1 == "") {
