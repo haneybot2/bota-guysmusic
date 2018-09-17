@@ -63,15 +63,16 @@ client.on('message', async msg => {
 	let cmds = {
       play: { cmd: 'play', a: ['p'] },
       skip: { cmd: 'skip' },
-	  skipr: { cmd: 'skipr' },
+      skipr: { cmd: 'skipr' },
       stop: { cmd: 'stop', a: ['s'] },
-	  join: { cmd: 'join', a: ['jo'] },
+      join: { cmd: 'join', a: ['jo'] },
       pause: { cmd: 'pause' },
       resume: { cmd: 'resume', a: ['re'] },
       volume: { cmd: 'volume', a: ['vol'] },
       queue: { cmd: 'queue', a: ['q'] },
       repeat: { cmd: 'repeat', a: ['re'] }
     };
+	
 	  Object.keys(cmds).forEach(key => {
     var value = cmds[key];
       var command = value.cmd;
@@ -205,20 +206,20 @@ client.on('message', async msg => {
 	.addField('__Now Playing__  :musical_note: ' , `**${serverQueue.songs[0].title}**`,true)
 	.addField(':musical_score:  __UP NEXT__ :musical_score: ' , `${serverQueue.songs.map(song => `**[${++index}] -** ${serverQueue.songs[i].title}[\`\`${serverQueue.songs[i].duration}\`\`]`).join('\n')}`);
 	return msg.channel.sendEmbed(embedqu);
-	}  else if (cmd === 'repeat') {
-	    if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
+    }  else if (cmd === 'repeat') {
+	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}repeat command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
         if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could repeat for you.**").then(message =>{message.delete(5000)})
-              if(serverQueue.repeating) {
+        if (serverQueue.repeating) {
         serverQueue.repeating = false;
         return msg.channel.send(':arrows_counterclockwise: **Repeating Mode** (`False`)');
-      } else {
+        } else {
         serverQueue.repeating = true;
         return msg.channel.send(':arrows_counterclockwise: **Repeating Mode** (`True`)');
-      }
+        }
         return undefined;
-	}  else if (cmd === 'skip') {
+    }  else if (cmd === 'skip') {
 	    if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}skip command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
@@ -226,8 +227,8 @@ client.on('message', async msg => {
         if (serverQueue.repeating) return msg.channel.send(`You can\'t skip it, because repeating mode is on, run \`\`${PREFIX}skipr\`\``);
 	    serverQueue.connection.dispatcher.end('Skip command has been used!');
         return undefined;
-	}  else if (cmd === 'skipr') {
-	    if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
+    }  else if (cmd === 'skipr') {
+	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}skipr command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
         if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could skipr for you.**").then(message =>{message.delete(5000)})
