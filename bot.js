@@ -64,7 +64,7 @@ client.on('message', async msg => {
       play: { cmd: 'play', a: ['p'] },
       skip: { cmd: 'skip' },
       stop: { cmd: 'stop', a: ['s'] },
-	  join: { cmd: 'join', a: ['jo'] },
+      join: { cmd: 'join', a: ['jo'] },
       pause: { cmd: 'pause' },
       resume: { cmd: 'resume', },
       volume: { cmd: 'volume', a: ['vol'] },
@@ -196,7 +196,7 @@ client.on('message', async msg => {
         } else {
         let n = conv.toWords(i+1)
         num = `:${n}:`
-        }
+        }}
         const embedqu = new Discord.RichEmbed()
         .setAuthor(`.A-Queue`, `https://goo.gl/jHxBTt`)
 	.setColor('BLACK')
