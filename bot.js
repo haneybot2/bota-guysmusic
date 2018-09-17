@@ -221,7 +221,7 @@ client.on('message', async msg => {
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
         if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could skip for you.**").then(message =>{message.delete(5000)})
 	if(serverQueue.repeating) return msg.channel.send(`You can\'t skip it, because repeating mode is on, run \`\`${PREFIX}queue\`\``);
-	if(parseInt(textxt[0]) > 500) return undefined;
+	if(parseInt(text1[0]) > 500) return undefined;
 	if (text1 == "") {
 		serverQueue.connection.dispatcher.end('Skip command has been used!');
 	} else {
