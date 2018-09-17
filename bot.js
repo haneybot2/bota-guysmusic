@@ -181,9 +181,6 @@ client.on('message', async msg => {
         let min = video.duration.minutes > 9 ? `${video.duration.minutes}:` : `0${video.duration.minutes}:`;
         let sec = video.duration.seconds > 9 ? `${video.duration.seconds}` : `0${video.duration.seconds}`;
         let dur = `${hrs}${min}${sec}`
-        const song = {
-              duration: dur
-	  };
 	  let index = 0;
         const embedqu = new Discord.RichEmbed()
         .setAuthor(`.A-Queue`, `https://goo.gl/jHxBTt`)
@@ -204,7 +201,7 @@ client.on('message', async msg => {
           let n = conv.toWords(i+1)
           num = `:${n}:`
         }
-        text += `**[${++index}] -** ${serverQueue.songs[i].title} \`\`[${serverQueue.songs[i].duration}]\`\` \n`
+        text += `**[${++index}] -** ${serverQueue.songs[i].title} \`\`[${dur}]\`\` \n`
         }
         embedqu.addField(':musical_score:  __UP NEXT__ :musical_score: ' , `${text}`)
 	embedqu.setFooter('#skip [number]');
