@@ -66,7 +66,7 @@ client.on('message', async msg => {
       stop: { cmd: 'stop', a: ['s'] },
 	  join: { cmd: 'join', a: ['jo'] },
       pause: { cmd: 'pause' },
-      resume: { cmd: 'resume', a: ['re'] },
+      resume: { cmd: 'resume', },
       volume: { cmd: 'volume', a: ['vol'] },
       queue: { cmd: 'queue', a: ['q'] },
       repeat: { cmd: 'repeat', a: ['re'] }
