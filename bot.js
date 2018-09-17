@@ -228,7 +228,7 @@ client.on('message', async msg => {
         if (!serverQueue.songs || serverQueue.songs < 2) return msg.channel.send(`**There is nothing playing to skip to.**`);
         if (serverQueue.repeating) return msg.channel.send(`**You can\'t skip, because repeating mode is on, run \`\`${PREFIX}repeat\`\` to turn off.**`);
         if (!argsvol[0] || isNaN(argsvol[0])) return msg.channel.send(`**Please input song number to skip to it, run \`\`${PREFIX}queue\`\` to see songs numbers.**`);
-        let sN = parseInt(argsvol[0]) - 1;
+        let sN = parseInt(argsvol[0]);
         if (!serverQueue.songs[sN]) return msg.channel.send(`There is nothing playing with this number.`);
         while (0 < sN) {
         serverQueue.songs.shift();
