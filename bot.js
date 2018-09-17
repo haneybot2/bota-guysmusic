@@ -211,10 +211,10 @@ client.on('message', async msg => {
         if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could repeat for you.**").then(message =>{message.delete(5000)})
         if (serverQueue.repeating) {
         serverQueue.repeating = false;
-        return msg.channel.send(':arrows_counterclockwise: **Repeating Mode** (`False`)');
+        return msg.channel.send(':arrows_counterclockwise: **Repeating Mode (`False`)**');
         } else {
         serverQueue.repeating = true;
-        return msg.channel.send(':arrows_counterclockwise: **Repeating Mode** (`True`)');
+        return msg.channel.send(':arrows_counterclockwise: **Repeating Mode (`True`)**');
         }
         return undefined;
     }  else if (cmd === 'skip') {
@@ -222,16 +222,13 @@ client.on('message', async msg => {
         console.log(`${msg.author.tag} has been used the ${PREFIX}skip command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
         if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could skip for you.**").then(message =>{message.delete(5000)})
-        if(serverQueue.repeating) {
-        serverQueue.repeating = false;
-        serverQueue.connection.dispatcher.end('ForceSkipping..')
-        } else {
-		serverQueue.repeating = true;
-        serverQueue.connection.dispatcher.end('ForceSkipping..')
-        }
-	  if (text1 == "") {
-		  serverQueue.connection.dispatcher.end();
-	  }
+	if (!serverQueue.repeating = true){
+	serverQueue.repeating = false;
+	serverQueue.connection.dispatcher.end('ForceSkipping..')
+	}
+	if (!serverQueue.repeating = false){
+        serverQueue.connection.dispatcher.end('Skip command has been used!');
+	}
         return undefined;
     }  else if (cmd === 'pause') {
 	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
