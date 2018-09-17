@@ -169,10 +169,10 @@ client.on('message', async msg => {
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
         if (!serverQueue) return msg.channel.send(':information_source: **There is nothing playing.**').then(message =>{message.delete(5000)})
         if (!args[1]) return msg.channel.send(`:speaker: **Current volume is:** ${serverQueue.volume}`);
-	if(parseInt(argsvol[0]) > 200) return msg.channel.send('**You can\'t set the volume more than `200`.**');
+	if (parseInt(argsvol[0]) > 200) return msg.channel.send('**You can\'t set the volume more than `200`.**');
         serverQueue.volume = argsvol[0];
         serverQueue.connection.dispatcher.setVolumeLogarithmic(serverQueue.volume / 200);
-        return msg.channel.send(`:loud_sound: **Volume:** ${argsvol[0]}`);
+        return msg.channel.send(`:loud_sound: **Volume:** ${serverQueue.volume}`);
     } else if (cmd === 'queue') {
 	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}queue command in ${msg.guild.name}`);
@@ -234,6 +234,7 @@ client.on('message', async msg => {
 	const song = {
           duration: dur,
 	};
+	if(serverQueue.repeating) return msg.channel.send(`You can\'t skip it, because repeating mode is on, run \`\`${PREFIX}queue\`\``);
 	if(parseInt(textxt[0]) > 500) return undefined;
 	if (text1 == "") {
 		serverQueue.connection.dispatcher.end('Skip command has been used!');
