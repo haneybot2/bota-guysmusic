@@ -222,12 +222,14 @@ client.on('message', async msg => {
         console.log(`${msg.author.tag} has been used the ${PREFIX}skip command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
         if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could skip for you.**").then(message =>{message.delete(5000)})
-        serverQueue.connection.dispatcher.end('Skip command has been used!');
-        if(serverQueue.repeating) {
+        if (serverQueue.repeating) {
         serverQueue.repeating = false;
         msg.channel.send('ForceSkipped, Repeating mode is on.')
         serverQueue.connection.dispatcher.end('ForceSkipping..')
         serverQueue.repeating = true;
+        } else {
+        serverQueue.connection.dispatcher.end('ForceSkipping..')
+        msg.channel.send('ForceSkipped.')
         } else if (text1 == "") {
 		serverQueue.connection.dispatcher.end('Skip command has been used!');
 	}
@@ -241,7 +243,7 @@ client.on('message', async msg => {
         serverQueue.connection.dispatcher.pause();
         return msg.channel.send('k :unamused:');
         }
-        return msg.channel.send(':information_source: **There is nothing playing.**').then(message =>{message.delete(5000)})
+        return msg.channel.send(':information_source: **There is nothing playing that I could pause for you.**').then(message =>{message.delete(5000)})
     } else if (cmd === 'resume') {
 	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}resume command in ${msg.guild.name}`);
@@ -251,7 +253,7 @@ client.on('message', async msg => {
         serverQueue.connection.dispatcher.resume();
         return msg.channel.send('k :slight_smile:');
         }
-        return msg.channel.send(':information_source: **There is nothing playing.**').then(message =>{message.delete(5000)})
+        return msg.channel.send(':information_source: **There is nothing playing that I could resume for you.**').then(message =>{message.delete(5000)})
     }
 
     return undefined;
