@@ -121,7 +121,7 @@ client.on('message', async msg => {
                     .setAuthor(`.A-Music`, `https://goo.gl/jHxBTt`)
 		    .setTitle(`**Song selection** :`)
                     .setDescription(`${videos.map(video2 => `[**${++index} **] \`${video2.title}\``).join('\n')}`);
-			
+			 
 		    		msg.channel.sendEmbed(embed1).then(message =>{message.delete(15000)});
 			
                     try {
