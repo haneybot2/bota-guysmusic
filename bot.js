@@ -222,17 +222,16 @@ client.on('message', async msg => {
         console.log(`${msg.author.tag} has been used the ${PREFIX}skip command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
         if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could skip for you.**").then(message =>{message.delete(5000)})
-        if (serverQueue.repeating) {
+        if(serverQueue.repeating) {
         serverQueue.repeating = false;
-        msg.channel.send('ForceSkipped, Repeating mode is on.')
         serverQueue.connection.dispatcher.end('ForceSkipping..')
-        serverQueue.repeating = true;
         } else {
+		serverQueue.repeating = true;
         serverQueue.connection.dispatcher.end('ForceSkipping..')
-        msg.channel.send('ForceSkipped.')
-        } else if (text1 == "") {
-		serverQueue.connection.dispatcher.end('Skip command has been used!');
-	}
+        }
+	  if (text1 == "") {
+		  serverQueue.connection.dispatcher.end();
+	  }
         return undefined;
     }  else if (cmd === 'pause') {
 	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
