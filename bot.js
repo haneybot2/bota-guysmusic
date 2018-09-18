@@ -64,7 +64,8 @@ client.on('message', async msg => {
     let cmds = {
 	play: { cmd: 'play', a: ['p'] },
 	stop: { cmd: 'stop', a: ['s']},
-	skip: { cmd: 'join' },
+	skip: { cmd: 'skip' },
+	join: { cmd: 'join' },
 	volume: { cmd: 'volume', a: ['vol'] },
 	queue: { cmd: 'queue', a: ['q'] },
 	repeat: { cmd: 'repeat', a: ['re'] },
@@ -159,7 +160,7 @@ client.on('message', async msg => {
         const voiceChannel = msg.member.voiceChannel
         voiceChannel.join().then(connection => console.log('joind to voiceChannel!')).catch(error =>{
         console.error(`I could not join the voice channel: **${error}**`);
-		return msg.channel.send(`I could not join the voice channel: **${error}**!`);
+	return msg.channel.send(`I could not join the voice channel: **${error}**!`);
         });
         return msg.channel.send('**:white_check_mark: Joind.**');
     } else if (cmd === 'volume') {
@@ -170,7 +171,7 @@ client.on('message', async msg => {
         if (!args[1]) return msg.channel.send(`:speaker: **Current volume is:** ${serverQueue.volume}`);
         if (parseInt(args2[0]) > 200) return msg.channel.send('**You can\'t set the volume more than `200`.**');
         serverQueue.volume = args2[0];
-        serverQueue.connection.dispatcher.setVolumeLogarithmic(serverQueue.volume / 200);
+        serverQueue.connection.dispatcher.setVolumeLogarithmic(serverQueue.volume / 250);
         return msg.channel.send(`:loud_sound: **Volume:** ${serverQueue.volume}`);
     } else if (cmd === 'queue') {
         if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
@@ -220,9 +221,9 @@ client.on('message', async msg => {
             serverQueue.repeating = false;
             serverQueue.connection.dispatcher.end('ForceSkipping..')
             serverQueue.repeating = true;
-          } else {
+        } else {
             serverQueue.connection.dispatcher.end('Skip command has been used!');
-          }
+        }
     }  else if (cmd === 'pause') {
 	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}pause command in ${msg.guild.name}`);
@@ -258,7 +259,7 @@ async function handleVideo(video, msg, voiceChannel, playlist = false) {
 	const song = {
 		id: video.id,
 		title: video.title,
-        duration: dur,
+		duration: dur,
 		url: `https://www.youtube.com/watch?v=${video.id}`
 	};
 	if (!serverQueue) {
@@ -311,7 +312,7 @@ function play(guild, song) {
 		.on('end', reason => {
 			if (reason === 'Stream is not generating quickly enough.') console.log('Song ended.');
 			else console.log(reason);
-            if(serverQueue.repeating) return play(guild, serverQueue.songs[0])
+			if(serverQueue.repeating) return play(guild, serverQueue.songs[0])
 			serverQueue.songs.shift();
 			play(guild, serverQueue.songs[0]);
 		})
