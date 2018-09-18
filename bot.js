@@ -63,12 +63,12 @@ client.on('message', async msg => {
     const command = args2.shift().toLowerCase();
     let cmds = {
 	play: { cmd: 'play', a: ['p'] },
-	stop: { cmd: 'stop', a: ['s']},
-	skip: { cmd: 'skip' },
+	stop: { cmd: 'stop', a: ['s'] },
 	join: { cmd: 'join' },
 	volume: { cmd: 'volume', a: ['vol'] },
 	queue: { cmd: 'queue', a: ['q'] },
 	repeat: { cmd: 'repeat', a: ['re'] },
+	skip: { cmd: 'skip' },
 	pause: { cmd: 'pause' },
 	resume: { cmd: 'resume' }
     };
@@ -80,8 +80,7 @@ client.on('message', async msg => {
 		  value.a.forEach(alias => {
 		  client.aliases.set(alias, command)
 	})
-	}});
-	
+	}})
     var cmd = client.commands.get(command) || client.commands.get(client.aliases.get(command));
 
     if (cmd === 'play') {
@@ -158,7 +157,9 @@ client.on('message', async msg => {
         console.log(`${msg.author.tag} has been used the ${PREFIX}join command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)});
         const voiceChannel = msg.member.voiceChannel
-        voiceChannel.join().then(connection => console.log('joind to voiceChannel!')).catch(error =>{
+        voiceChannel.join()
+	.then(connection => console.log('joind to voiceChannel!'))
+	.catch(error =>{
         console.error(`I could not join the voice channel: **${error}**`);
 	return msg.channel.send(`I could not join the voice channel: **${error}**!`);
         });
@@ -171,7 +172,7 @@ client.on('message', async msg => {
         if (!args[1]) return msg.channel.send(`:speaker: **Current volume is:** ${serverQueue.volume}`);
         if (parseInt(args2[0]) > 200) return msg.channel.send('**You can\'t set the volume more than `200`.**');
         serverQueue.volume = args2[0];
-        serverQueue.connection.dispatcher.setVolumeLogarithmic(serverQueue.volume / 250);
+        serverQueue.connection.dispatcher.setVolumeLogarithmic(serverQueue.volume / 150);
         return msg.channel.send(`:loud_sound: **Volume:** ${serverQueue.volume}`);
     } else if (cmd === 'queue') {
         if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
@@ -317,7 +318,7 @@ function play(guild, song) {
 			play(guild, serverQueue.songs[0]);
 		})
 		.on('error', error => console.error(error));
-	dispatcher.setVolumeLogarithmic(serverQueue.volume / 250);
+	dispatcher.setVolumeLogarithmic(serverQueue.volume / 150);
 
 
 }
