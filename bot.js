@@ -15,8 +15,6 @@ client.commands = new Discord.Collection();
 client.aliases = new Discord.Collection();
 const PREFIX = "#";
 
-
-
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
   console.log('')
@@ -63,29 +61,27 @@ client.on('message', async msg => {
     const text1 = args1.slice(0).join("");
     const args2 = msg.content.slice(PREFIX.length).trim().split(/ +/g);
     const command = args2.shift().toLowerCase();
-
-	let cmds = {
-		play: { cmd: 'play', a: ['p'] },
-		stop: { cmd: 'stop', a: ['s']},
-		skip: { cmd: 'join' },
-		volume: { cmd: 'volume', a: ['vol'] },
-		queue: { cmd: 'queue', a: ['q'] },
-		repeat: { cmd: 'repeat', a: ['re'] },
-		pause: { cmd: 'pause' },
-		resume: { cmd: 'resume' }
-	  };
-	Object.keys(cmds).forEach(key => {
-	  var value = cmds[key];
-		var command = value.cmd;
-		client.commands.set(command, command);
-  
-		if(value.a) {
+    let cmds = {
+	play: { cmd: 'play', a: ['p'] },
+	stop: { cmd: 'stop', a: ['s']},
+	skip: { cmd: 'join' },
+	volume: { cmd: 'volume', a: ['vol'] },
+	queue: { cmd: 'queue', a: ['q'] },
+	repeat: { cmd: 'repeat', a: ['re'] },
+	pause: { cmd: 'pause' },
+	resume: { cmd: 'resume' }
+    };
+    Object.keys(cmds).forEach(key => {
+    	var value = cmds[key];
+    	var command = value.cmd;
+    	client.commands.set(command, command);
+	if(value.a) {
 		  value.a.forEach(alias => {
 		  client.aliases.set(alias, command)
-		})
-		}
 	})
-	var cmd = client.commands.get(command) || client.commands.get(client.aliases.get(command))
+	}});
+	
+    var cmd = client.commands.get(command) || client.commands.get(client.aliases.get(command));
 
     if (cmd === 'play') {
 	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
@@ -101,7 +97,7 @@ client.on('message', async msg => {
 			return msg.channel.send("**I can not speak in this room, please make sure that i have full perms for this**!");
                 }
 		if (text1 == "") {
-			msg.channel.send("**:x: Please specify a filename.**");
+			return msg.channel.send("**:x: Please specify a filename.**");
 		}
         
         if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
@@ -152,8 +148,7 @@ client.on('message', async msg => {
         if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}stop command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)});
-        if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could stop for you.**").then(message =>{message.delete(5000)})
-        serverQueue.voiceChannel.leave();
+        if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could stop for you.**").then(message =>{message.delete(5000)});
         serverQueue.songs = [];
         serverQueue.connection.dispatcher.end('Stop command has been used!');
         return msg.channel.send('k :cry:');
@@ -210,27 +205,24 @@ client.on('message', async msg => {
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)});
         if (!serverQueue) return msg.channel.send(':information_source: **There is nothing playing that I could repeat for you.**').then(message =>{message.delete(5000)});
         if(serverQueue.repeating) {
-		  serverQueue.repeating = false;
-		  return msg.channel.send(':repeat: **.A-Repeating Mode** (`False`)');
+		serverQueue.repeating = false;
+		return msg.channel.send(':repeat: **.A-Repeating Mode** (`False`)');
         } else {
 		serverQueue.repeating = true;
-        	return msg.channel.send(':repeat: **.A-Repeating Mode** (`True`)');
+		return msg.channel.send(':repeat: **.A-Repeating Mode** (`True`)');
         }
     } else if (cmd === 'skip') {
         if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}skip command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)});
         if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could skip for you.**").then(message =>{message.delete(5000)});
-	
-	if(serverQueue.repeating) {
-		serverQueue.repeating = false;
-		serverQueue.connection.dispatcher.end('ForceSkipping..')
-		serverQueue.repeating = true;
-	} else {
-		serverQueue.connection.dispatcher.end('Skip command has been used!')
-		msg.channel.send(`:white_check_mark: .A-Music playing **${song.title}**`);
-	}
-        return undefined;
+        if(serverQueue.repeating) {
+            serverQueue.repeating = false;
+            serverQueue.connection.dispatcher.end('ForceSkipping..')
+            serverQueue.repeating = true;
+          } else {
+            serverQueue.connection.dispatcher.end('Skip command has been used!');
+          }
     }  else if (cmd === 'pause') {
 	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}pause command in ${msg.guild.name}`);
@@ -244,9 +236,9 @@ client.on('message', async msg => {
 	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
 	console.log(`${msg.author.tag} has been used the ${PREFIX}resume command in ${msg.guild.name}`);
 	if (serverQueue && !serverQueue.playing) {
-            serverQueue.playing =  true;
-            serverQueue.connection.dispatcher.resume();
-            return msg.channel.send('k :slight_smile:');
+        serverQueue.playing =  true;
+        serverQueue.connection.dispatcher.resume();
+        return msg.channel.send('k :slight_smile:');
 	}
 	return msg.channel.send(':information_source: **There is nothing playing that I could resume for you.**').then(message =>{message.delete(5000)})
     }
@@ -256,11 +248,12 @@ client.on('message', async msg => {
 
 async function handleVideo(video, msg, voiceChannel, playlist = false) {
 	const serverQueue = queue.get(msg.guild.id);
-
-let hrs = video.duration.hours == 1 ? (video.duration.hours > 9 ? `${video.duration.hours}:` : `0${video.duration.hours}:`) : '';
-let min = video.duration.minutes > 9 ? `${video.duration.minutes}:` : `0${video.duration.minutes}:`;
-let sec = video.duration.seconds > 9 ? `${video.duration.seconds}` : `0${video.duration.seconds}`;
-let dur = `${hrs}${min}${sec}`
+    console.log(video);
+    console.log('yao: ' + Util.escapeMarkdown(video.thumbnailUrl));
+    let hrs = video.duration.hours == 1 ? (video.duration.hours > 9 ? `${video.duration.hours}:` : `0${video.duration.hours}:`) : '';
+    let min = video.duration.minutes > 9 ? `${video.duration.minutes}:` : `0${video.duration.minutes}:`;
+    let sec = video.duration.seconds > 9 ? `${video.duration.seconds}` : `0${video.duration.seconds}`;
+    let dur = `${hrs}${min}${sec}`
 
 	const song = {
 		id: video.id,
@@ -294,7 +287,7 @@ let dur = `${hrs}${min}${sec}`
 	} else {
 		serverQueue.songs.push(song);
 		if (playlist) return undefined;
-            else return msg.channel.send(`:white_check_mark: \`\`${song.title}\`\`[\`\`${song.duration}\`\`] Added to **.A-Queue**!`)
+        else return msg.channel.send(`:white_check_mark: \`\`${song.title}\`\`[\`\`${song.duration}\`\`] Added to **.A-Queue**!`)
         }
         return undefined;
 }
@@ -303,6 +296,7 @@ function play(guild, song) {
 	const serverQueue = queue.get(guild.id);
 
 	if (!song) {
+        serverQueue.voiceChannel.leave();
 		queue.delete(guild.id);
 		return serverQueue.textChannel.send(`:stop_button: **.A-Queue** finished!!`);
 	}
