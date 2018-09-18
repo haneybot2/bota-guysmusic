@@ -56,49 +56,48 @@ client.on('message', async msg => {
     const searchString = args.slice(1).join(' ');
     const url = args[1] ? args[1].replace(/<(.+)>/g, '$1') : '';
     const serverQueue = queue.get(msg.guild.id);
-	const text1 = args.slice(0).join("");
-	const argsvol = msg.content.slice(PREFIX.length).trim().split(/ +/g);
-	const command = argsvol.shift().toLowerCase();
-	
-	let cmds = {
-      play: { cmd: 'play', a: ['p'] },
-      skip: { cmd: 'skip' },
-      skipr: { cmd: 'skipr' },
-      stop: { cmd: 'stop', a: ['s'] },
-      join: { cmd: 'join', a: ['jo'] },
-      pause: { cmd: 'pause' },
-      resume: { cmd: 'resume', a: ['re'] },
-      volume: { cmd: 'volume', a: ['vol'] },
-      queue: { cmd: 'queue', a: ['q'] },
-      repeat: { cmd: 'repeat', a: ['re'] }
-    };
-	
-	  Object.keys(cmds).forEach(key => {
-    var value = cmds[key];
-      var command = value.cmd;
-      client.commands.set(command, command);
+    const args1 = msg.content.split(" ").slice(1);
+    const text1 = args1.slice(0).join("");
+    const args2 = msg.content.slice(PREFIX.length).trim().split(/ +/g);
+    const command = args2.shift().toLowerCase();
 
-      if(value.a) {
-        value.a.forEach(alias => {
-        client.aliases.set(alias, command)
-      })
-      }
-    })
-	let cmd = client.commands.get(command) || client.commands.get(client.aliases.get(command))
- 
+	let cmds = {
+		play: { cmd: 'play', a: ['p'] },
+		stop: { cmd: 'stop', a: ['s']},
+		skip: { cmd: 'join' },
+		volume: { cmd: 'volume', a: ['vol'] },
+		queue: { cmd: 'queue', a: ['q'] },
+		repeat: { cmd: 'repeat', a: ['re'] },
+		pause: { cmd: 'pause' },
+		resume: { cmd: 'resume' }
+	  };
+	Object.keys(cmds).forEach(key => {
+	  var value = cmds[key];
+		var command = value.cmd;
+		client.commands.set(command, command);
+  
+		if(value.a) {
+		  value.a.forEach(alias => {
+		  client.aliases.set(alias, command)
+		})
+		}
+	})
+	var cmd = client.commands.get(command) || client.commands.get(client.aliases.get(command))
+
     if (cmd === 'play') {
 	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}play command in ${msg.guild.name}`);
         const voiceChannel = msg.member.voiceChannel;
+        let args1 = msg.content.split(' ').slice(1);
         if (!voiceChannel) return msg.channel.send(":x:** You need to be in a voice channel**!");
 		const permissions = voiceChannel.permissionsFor(msg.client.user);
 		if (!permissions.has('CONNECT')) {
-                        return msg.channel.send(":no_entry_sign: **I am unable to connect **!").then(m => m.delete(6000));
+                        return msg.channel.send(":no_entry_sign: **I am unable to connect **!");
 		}
 		if (!permissions.has('SPEAK')) {
-			return msg.channel.send("**I can not speak in this room, please make sure that i have full perms for this**!").then(m => m.delete(6000));;
-        }
-        if (text1 == "") {
+			return msg.channel.send("**I can not speak in this room, please make sure that i have full perms for this**!");
+                }
+		if (text1 == "") {
 			msg.channel.send("**:x: Please specify a filename.**");
 		}
         
@@ -119,9 +118,9 @@ client.on('message', async msg => {
                     var videos = await youtube.searchVideos(searchString, 5);
                     let index = 0;
                     const embed1 = new Discord.RichEmbed()
-		    .setColor('BLACK')
+                    .setColor('BLACK')
                     .setAuthor(`.A-Music`, `https://goo.gl/jHxBTt`)
-		    .setTitle(`**Song selection** :`)
+                    .setTitle(`**Song selection** :`)
                     .setDescription(`${videos.map(video2 => `[**${++index} **] \`${video2.title}\``).join('\n')}`);
 			
 		    		msg.channel.sendEmbed(embed1).then(message =>{message.delete(15000)});
@@ -145,161 +144,154 @@ client.on('message', async msg => {
             }
 
             return handleVideo(video, msg, voiceChannel);
-        }
+        }    
     } else if (cmd === 'stop') {
-	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
+        if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}stop command in ${msg.guild.name}`);
-        if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
+        if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)});
         if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could stop for you.**").then(message =>{message.delete(5000)})
+        serverQueue.voiceChannel.leave();
         serverQueue.songs = [];
         serverQueue.connection.dispatcher.end('Stop command has been used!');
-		serverQueue.voiceChannel.leave();
         return msg.channel.send('k :cry:');
     } else if (cmd === 'join') {
-	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
+        if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}join command in ${msg.guild.name}`);
-        if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
-	const voiceChannel = msg.member.voiceChannel
-	voiceChannel.join().then(connection => console.log('joind to voiceChannel!')).catch(error =>{
-	console.error(`I could not join the voice channel: **${error}**`);
-        return msg.channel.send(`I could not join the voice channel: **${error}**!`);
-	});
+        if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)});
+        const voiceChannel = msg.member.voiceChannel
+        voiceChannel.join().then(connection => console.log('joind to voiceChannel!')).catch(error =>{
+        console.error(`I could not join the voice channel: **${error}**`);
+		return msg.channel.send(`I could not join the voice channel: **${error}**!`);
+        });
         return msg.channel.send('**:white_check_mark: Joind.**');
     } else if (cmd === 'volume') {
-	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
+        if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}volume command in ${msg.guild.name}`);
-        if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
-        if (!serverQueue) return msg.channel.send(':information_source: **There is nothing playing.**').then(message =>{message.delete(5000)})
+        if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)});
+        if (!serverQueue) return msg.channel.send(':information_source: **There is nothing playing.**').then(message =>{message.delete(5000)});
         if (!args[1]) return msg.channel.send(`:speaker: **Current volume is:** ${serverQueue.volume}`);
-	if (parseInt(argsvol[0]) > 200) return msg.channel.send('**You can\'t set the volume more than `200`.**');
-        serverQueue.volume = argsvol[0];
+        if (parseInt(args2[0]) > 200) return msg.channel.send('**You can\'t set the volume more than `200`.**');
+        serverQueue.volume = args2[0];
         serverQueue.connection.dispatcher.setVolumeLogarithmic(serverQueue.volume / 200);
         return msg.channel.send(`:loud_sound: **Volume:** ${serverQueue.volume}`);
     } else if (cmd === 'queue') {
-	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
+        if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}queue command in ${msg.guild.name}`);
         if (!serverQueue) return msg.channel.send(':information_source: **no_more_Queue.**').then(message =>{message.delete(5000)});
-	let hrs = video.duration.hours == 1 ? (video.duration.hours > 9 ? `${video.duration.hours}:` : `0${video.duration.hours}:`) : '';
-	let min = video.duration.minutes > 9 ? `${video.duration.minutes}:` : `0${video.duration.minutes}:`;
-	let sec = video.duration.seconds > 9 ? `${video.duration.seconds}` : `0${video.duration.seconds}`;
-	let dur = `${hrs}${min}${sec}`
-	const song = {
-           duration: dur
-	};
-	let index = 0;
-	for (var i = 0; i < serverQueue.songs.length; i++) {
-        let num;
-        if((i) > 8) {
-          let st = `${i+1}`
-          console.log(st);
-          let n1 = conv.toWords(st[0])
-          let n2 = conv.toWords(st[1])
-          num = `:${n1}::${n2}:`
+        let index = 0;
+        let text = '';
+        for (var i = 0; i < serverQueue.songs.length; i++) {
+	let num;
+	if((i) > 8) {
+		let st = `${i+1}`
+		console.log(st);
+		let n1 = conv.toWords(st[0])
+		let n2 = conv.toWords(st[1])
+		num = `:${n1}::${n2}:`
         } else {
-        let n = conv.toWords(i+1)
-        num = `:${n}:`
-        }}
+		let n = conv.toWords(i+1)
+		num = `:${n}:`
+        }
+		text += `**[${++index}] -** ${serverQueue.songs[i].title} [\`\`${serverQueue.songs[i].duration}\`\`]\n`
+        }
         const embedqu = new Discord.RichEmbed()
+        .setColor('BLACK')
         .setAuthor(`.A-Queue`, `https://goo.gl/jHxBTt`)
-	.setColor('BLACK')
-	.setTitle("**.A-Queue List :**")
-	.addField('__Now Playing__  :musical_note: ' , `**${serverQueue.songs[0].title}**`,true)
-	.addField(':musical_score:  __UP NEXT__ :musical_score: ' , `${serverQueue.songs.map(song => `**[${++index}] -** ${serverQueue.songs[i].title}[\`\`${serverQueue.songs[i].duration}\`\`]`).join('\n')}`);
-	return msg.channel.sendEmbed(embedqu);
-    }  else if (cmd === 'repeat') {
+        .setTitle("**.A-Queue List :**")
+        .addField('__Now Playing__  :musical_note: ' , `**${serverQueue.songs[0].title}**`,true)
+        .addField(':musical_score:  __UP NEXT__ :musical_score: ' , `${text}`);
+        return msg.channel.sendEmbed(embedqu);
+    } else if(cmd === 'repeat') {
 	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
-        console.log(`${msg.author.tag} has been used the ${PREFIX}repeat command in ${msg.guild.name}`);
-        if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
-        if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could repeat for you.**").then(message =>{message.delete(5000)})
-        if (serverQueue.repeating) {
-        serverQueue.repeating = false;
-        return msg.channel.send(':arrows_counterclockwise: **Repeating Mode** (`False`)');
+        console.log(`${msg.author.tag} has been used the ${PREFIX}repeat,' command in ${msg.guild.name}`);
+        if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)});
+        if (!serverQueue) return msg.channel.send(':information_source: **There is nothing playing that I could repeat for you.**').then(message =>{message.delete(5000)});
+        if(serverQueue.repeating) {
+		  serverQueue.repeating = false;
+		  return msg.channel.send(':repeat: **.A-Repeating Mode** (`False`)');
         } else {
-        serverQueue.repeating = true;
-        return msg.channel.send(':arrows_counterclockwise: **Repeating Mode** (`True`)');
+		serverQueue.repeating = true;
+        	return msg.channel.send(':repeat: **.A-Repeating Mode** (`True`)');
         }
-        return undefined;
-    }  else if (cmd === 'skip') {
-	    if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
+    } else if (cmd === 'skip') {
+        if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}skip command in ${msg.guild.name}`);
-        if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
-        if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could skip for you.**").then(message =>{message.delete(5000)})
-        if (serverQueue.repeating) return msg.channel.send(`You can\'t skip it, because repeating mode is on, run \`\`${PREFIX}skipr\`\``);
-	    serverQueue.connection.dispatcher.end('Skip command has been used!');
-        return undefined;
-    }  else if (cmd === 'skipr') {
-	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
-        console.log(`${msg.author.tag} has been used the ${PREFIX}skipr command in ${msg.guild.name}`);
-        if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
-        if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could skipr for you.**").then(message =>{message.delete(5000)})
-        if (serverQueue.repeating) {
-        serverQueue.repeating = false;
-        serverQueue.connection.dispatcher.end('ForceSkipping..')
-        serverQueue.repeating = true;
-        } else {
-        serverQueue.connection.dispatcher.end('ForceSkipping..')
-        }
+        if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)});
+        if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could skip for you.**").then(message =>{message.delete(5000)});
+	
+	if(serverQueue.repeating) {
+		serverQueue.repeating = false;
+		serverQueue.connection.dispatcher.end('ForceSkipping..')
+		serverQueue.repeating = true;
+	} else {
+		serverQueue.connection.dispatcher.end('Skip command has been used!')
+		msg.channel.send(`:white_check_mark: .A-Music playing **${song.title}**`);
+	}
         return undefined;
     }  else if (cmd === 'pause') {
-	    if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
+	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}pause command in ${msg.guild.name}`);
-		if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
         if (serverQueue && serverQueue.playing) {
         serverQueue.playing = false;
         serverQueue.connection.dispatcher.pause();
         return msg.channel.send('k :unamused:');
-        }
-        return msg.channel.send(':information_source: **There is nothing playing.**').then(message =>{message.delete(5000)})
+	}
+        return msg.channel.send(':information_source: **There is nothing playing that I could pause for you.**').then(message =>{message.delete(5000)})
     } else if (cmd === 'resume') {
 	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
-        console.log(`${msg.author.tag} has been used the ${PREFIX}resume command in ${msg.guild.name}`);
-        if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)})
-        if (serverQueue && !serverQueue.playing) {
+	console.log(`${msg.author.tag} has been used the ${PREFIX}resume command in ${msg.guild.name}`);
+	if (serverQueue && !serverQueue.playing) {
             serverQueue.playing =  true;
             serverQueue.connection.dispatcher.resume();
             return msg.channel.send('k :slight_smile:');
-        }
-        return msg.channel.send(':information_source: **There is nothing playing.**').then(message =>{message.delete(5000)})
+	}
+	return msg.channel.send(':information_source: **There is nothing playing that I could resume for you.**').then(message =>{message.delete(5000)})
     }
 
     return undefined;
 });
 
 async function handleVideo(video, msg, voiceChannel, playlist = false) {
-    const serverQueue = queue.get(msg.guild.id);
-    console.log(video);
-        const song = {
-            id: video.id,
-            title: Util.escapeMarkdown(video.title),
-            url: `https://www.youtube.com/watch?v=${video.id}`
-        };
-        if (!serverQueue) {
-            const queueConstruct = {
-			   textChannel: msg.channel,
-			   voiceChannel: voiceChannel,
-			   connection: null,
-			   songs: [],
-			   volume: 150,
-			   playing: true,
-               repeating: false
-            };
-            queue.set(msg.guild.id, queueConstruct);
+	const serverQueue = queue.get(msg.guild.id);
 
-            queueConstruct.songs.push(song);
+let hrs = video.duration.hours == 1 ? (video.duration.hours > 9 ? `${video.duration.hours}:` : `0${video.duration.hours}:`) : '';
+let min = video.duration.minutes > 9 ? `${video.duration.minutes}:` : `0${video.duration.minutes}:`;
+let sec = video.duration.seconds > 9 ? `${video.duration.seconds}` : `0${video.duration.seconds}`;
+let dur = `${hrs}${min}${sec}`
 
-            try {
-                var connection = await voiceChannel.join();
-                queueConstruct.connection = connection;
-                play(msg.guild, queueConstruct.songs[0]);
-            } catch (error) {
-                console.error(`I could not speak the voice channel: ${error}`);
-                queue.delete(msg.guild.id);
-                return msg.channel.send(`I could not speak the voice channel: **${error}**!`);
-            }
-        } else {
-            serverQueue.songs.push(song);
-            if (playlist) return undefined;
-            else return msg.channel.send(`:white_check_mark: \`\`${song.title}\`\` Added to **.A-Queue**!`)
+	const song = {
+		id: video.id,
+		title: video.title,
+        duration: dur,
+		url: `https://www.youtube.com/watch?v=${video.id}`
+	};
+	if (!serverQueue) {
+		const queueConstruct = {
+			textChannel: msg.channel,
+			voiceChannel: voiceChannel,
+			connection: null,
+			songs: [],
+			volume: 100,
+			playing: true,
+        	repeating: false
+		};
+		queue.set(msg.guild.id, queueConstruct);
+
+		queueConstruct.songs.push(song);
+
+		try {
+			var connection = await voiceChannel.join();
+			queueConstruct.connection = connection;
+			play(msg.guild, queueConstruct.songs[0]);
+		} catch (error) {
+			console.error(`I could not join the voice channel: ${error}`);
+			queue.delete(msg.guild.id);
+			return msg.channel.send(`I cant join this voice channel: **${error}**`);
+		}
+	} else {
+		serverQueue.songs.push(song);
+		if (playlist) return undefined;
+            else return msg.channel.send(`:white_check_mark: \`\`${song.title}\`\`(\`\`${song.duration}\`\`) Added to **.A-Queue**!`)
         }
         return undefined;
 }
@@ -309,27 +301,25 @@ function play(guild, song) {
 
 	if (!song) {
 		queue.delete(guild.id);
-		serverQueue.textChannel.send(`:stop_button: **.A-Queue** finished!!`);
-        return undefined;
+		return serverQueue.textChannel.send(`:stop_button: **.A-Queue** finished!!`);
 	}
 	console.log(serverQueue.songs);
-	
-    if(serverQueue.repeating) {
-    serverQueue.textChannel.send(`:white_check_mark: .A-Repeating playing **${song.title}**`);
-    } else {
+  if(serverQueue.repeating) {
+	serverQueue.textChannel.send(`:white_check_mark: .A-Music Repeating **${song.title}**`);
+  } else {
 	serverQueue.textChannel.send(`:white_check_mark: .A-Music playing **${song.title}**`);
-    }
-	
+}
+
 	const dispatcher = serverQueue.connection.playStream(ytdl(song.url))
 		.on('end', reason => {
 			if (reason === 'Stream is not generating quickly enough.') console.log('Song ended.');
 			else console.log(reason);
-      if(serverQueue.repeating) return play(guild, serverQueue.songs[0])
+            if(serverQueue.repeating) return play(guild, serverQueue.songs[0])
 			serverQueue.songs.shift();
 			play(guild, serverQueue.songs[0]);
 		})
 		.on('error', error => console.error(error));
-	dispatcher.setVolumeLogarithmic(serverQueue.volume / 200);
+	dispatcher.setVolumeLogarithmic(serverQueue.volume / 250);
 
 
 }
