@@ -276,7 +276,7 @@ let dur = `${hrs}${min}${sec}`
 			songs: [],
 			volume: 100,
 			playing: true,
-        	repeating: false
+        		repeating: false
 		};
 		queue.set(msg.guild.id, queueConstruct);
 
@@ -294,7 +294,7 @@ let dur = `${hrs}${min}${sec}`
 	} else {
 		serverQueue.songs.push(song);
 		if (playlist) return undefined;
-            else return msg.channel.send(`:white_check_mark: \`\`${song.title}\`\`(\`\`${song.duration}\`\`) Added to **.A-Queue**!`)
+            else return msg.channel.send(`:white_check_mark: \`\`${song.title}\`\`[\`\`${song.duration}\`\`] Added to **.A-Queue**!`)
         }
         return undefined;
 }
