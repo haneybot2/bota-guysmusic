@@ -104,48 +104,48 @@ client.on('message', async msg => {
 		return msg.channel.send("**:x: Please specify a filename.**");
         }
         
-        if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
-            const playlist = await youtube.getPlaylist(url);
-            const videos = await playlist.getVideos();
-            for (const video of Object.values(videos)) {
-                const video2 = await youtube.getVideoByID(video.id); 
-                await handleVideo(video2, msg, voiceChannel, true) 
-            }
+		if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
+			const playlist = await youtube.getPlaylist(url);
+			const videos = await playlist.getVideos();
+			for (const video of Object.values(videos)) {
+				const video2 = await youtube.getVideoByID(video.id); // eslint-disable-line no-await-in-loop
+				await handleVideo(video2, msg, voiceChannel, true); // eslint-disable-line no-await-in-loop
+			}
             return msg.channel.send(`:white_check_mark: \`\`${playlist.title}\`\` Added to **.A-Queue**!`);
         } else {
-            try {
-                var video = await youtube.getVideo(url);
-            } catch (error) {
-                try {
-		    voiceChannel.join().then(connection => console.log('Connected!'));
-                    var videos = await youtube.searchVideos(searchString, 5);
-                    let index = 0;
+			try {
+				var video = await youtube.getVideo(url);
+			} catch (error) {
+				try {
+					var videos = await youtube.searchVideos(searchString, 5);
+					let index = 0;
+					voiceChannel.join().then(connection => console.log('Connected!'));
                     const embed1 = new Discord.RichEmbed()
                     .setColor('BLACK')
                     .setAuthor(`.A-Music`, `https://goo.gl/jHxBTt`)
                     .setTitle(`**Song selection** :`)
                     .setDescription(`${videos.map(video2 => `[**${++index} **] \`${video2.title}\``).join('\n')}`);
                     msg.channel.sendEmbed(embed1).then(message =>{message.delete(15000)});	
-                    try {
-                        var response = await msg.channel.awaitMessages(msg2 => msg2.content > 0 && msg2.content < 11, {
-                            maxMatches: 1,
-                            time: 15000,
-                            errors: ['time']
-                        });
-                    } catch (err) {
-                        console.error(err);
-                        return msg.channel.send(':information_source: **No song selected to play.**').then(message =>{message.delete(5000)})
-                    }
-                    const videoIndex = (response.first().content);
-                    var video = await youtube.getVideoByID(videos[videoIndex - 1].id);
-                } catch (err) {
-                    console.error(err);
-                    return msg.channel.send(':x: **I don`t get any search result.**').then(message =>{message.delete(5000)});
-                }
-            }
-
-            return handleVideo(video, msg, voiceChannel);
-        }    
+					// eslint-disable-next-line max-depth
+					try {
+						var response = await msg.channel.awaitMessages(msg2 => msg2.content > 0 && msg2.content < 11, {
+							maxMatches: 1,
+							time: 15000,
+							errors: ['time']
+						});
+					} catch (err) {
+						console.error(err);
+						return msg.channel.send(':information_source: **No song selected to play.**').then(message =>{message.delete(5000)});
+					}
+					const videoIndex = parseInt(response.first().content);
+					var video = await youtube.getVideoByID(videos[videoIndex - 1].id);
+				} catch (err) {
+					console.error(err);
+					return msg.channel.send(':x: **I don`t get any search result.**').then(message =>{message.delete(5000)});
+				}
+			}
+			return handleVideo(video, msg, voiceChannel);
+		} 
     } else if (cmd === 'stop') {
         if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}stop command in ${msg.guild.name}`);
