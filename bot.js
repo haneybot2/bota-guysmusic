@@ -15,6 +15,7 @@ client.commands = new Discord.Collection();
 client.aliases = new Discord.Collection();
 const PREFIX = "#";
 
+
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
   console.log('')
@@ -54,13 +55,15 @@ client.on('message', async msg => {
     if (!msg.content.startsWith(PREFIX)) return undefined;
 
     const args = msg.content.split(' ');
-    const searchString = args.slice(1).join(' ');
-    const url = args[1] ? args[1].replace(/<(.+)>/g, '$1') : '';
-    const serverQueue = queue.get(msg.guild.id);
     const args1 = msg.content.split(" ").slice(1);
     const text1 = args1.slice(0).join("");
     const args2 = msg.content.slice(PREFIX.length).trim().split(/ +/g);
+    const searchString = args.slice(1).join(' ');
+    const url = args[1] ? args[1].replace(/<(.+)>/g, '$1') : '';
+    const serverQueue = queue.get(msg.guild.id);
+    const voiceChannel = msg.member.voiceChannel;
     const command = args2.shift().toLowerCase();
+	
     let cmds = {
 	play: { cmd: 'play', a: ['p'] },
 	stop: { cmd: 'stop', a: ['s'] },
@@ -86,7 +89,6 @@ client.on('message', async msg => {
     if (cmd === 'play') {
 	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}play command in ${msg.guild.name}`);
-        const voiceChannel = msg.member.voiceChannel;
         let args1 = msg.content.split(' ').slice(1);
         if (!voiceChannel) return msg.channel.send(":x:** You need to be in a voice channel**!");
 		const permissions = voiceChannel.permissionsFor(msg.client.user);
@@ -113,7 +115,7 @@ client.on('message', async msg => {
                 var video = await youtube.getVideo(url);
             } catch (error) {
                 try {
-		     voiceChannel.join().then(connection => console.log('Connected!'));
+		    voiceChannel.join().then(connection => console.log('Connected!'));
                     var videos = await youtube.searchVideos(searchString, 5);
                     let index = 0;
                     const embed1 = new Discord.RichEmbed()
@@ -156,10 +158,7 @@ client.on('message', async msg => {
         if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}join command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)});
-        const voiceChannel = msg.member.voiceChannel
-        voiceChannel.join()
-	.then(connection => console.log('joind to voiceChannel!'))
-	.catch(error =>{
+        voiceChannel.join().then(connection => console.log('joind to voiceChannel!')).catch(error =>{
         console.error(`I could not join the voice channel: **${error}**`);
 	return msg.channel.send(`I could not join the voice channel: **${error}**!`);
         });
@@ -250,12 +249,11 @@ client.on('message', async msg => {
 
 async function handleVideo(video, msg, voiceChannel, playlist = false) {
 	const serverQueue = queue.get(msg.guild.id);
-    console.log(video);
-
-    let hrs = video.duration.hours == 1 ? (video.duration.hours > 9 ? `${video.duration.hours}:` : `0${video.duration.hours}:`) : '';
-    let min = video.duration.minutes > 9 ? `${video.duration.minutes}:` : `0${video.duration.minutes}:`;
-    let sec = video.duration.seconds > 9 ? `${video.duration.seconds}` : `0${video.duration.seconds}`;
-    let dur = `${hrs}${min}${sec}`
+	let hrs = video.duration.hours == 1 ? (video.duration.hours > 9 ? `${video.duration.hours}:` : `0${video.duration.hours}:`) : '';
+	let min = video.duration.minutes > 9 ? `${video.duration.minutes}:` : `0${video.duration.minutes}:`;
+	let sec = video.duration.seconds > 9 ? `${video.duration.seconds}` : `0${video.duration.seconds}`;
+	let dur = `${hrs}${min}${sec}`;
+	console.log(video);
 
 	const song = {
 		id: video.id,
@@ -289,7 +287,7 @@ async function handleVideo(video, msg, voiceChannel, playlist = false) {
 	} else {
 		serverQueue.songs.push(song);
 		if (playlist) return undefined;
-        else return msg.channel.send(`:white_check_mark: \`\`${song.title}\`\`[\`\`${song.duration}\`\`] Added to **.A-Queue**!`)
+        else return msg.channel.send(`:white_check_mark: \`\`${song.title}\`\`[\`\`${song.duration}\`\`] Added to **.A-Queue**!`);
         }
         return undefined;
 }
