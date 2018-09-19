@@ -72,7 +72,7 @@ Object.keys(cmds).forEach(key => {
 		  value.a.forEach(alias => {
 		  client.aliases.set(alias, command)
 	})
-}})
+}});
 
 client.on('message', async msg => { 
     if (msg.author.bot) return undefined;
@@ -119,9 +119,9 @@ client.on('message', async msg => {
 				var video = await youtube.getVideo(url);
 			} catch (error) {
 				try {
+					voiceChannel.join().then(connection => console.log('Connected!'));
 					var videos = await youtube.searchVideos(searchString, 5);
 					let index = 0;
-					voiceChannel.join().then(connection => console.log('Connected!'));
                     const embed1 = new Discord.RichEmbed()
                     .setColor('BLACK')
                     .setAuthor(`.A-Music`, `https://goo.gl/jHxBTt`)
@@ -281,7 +281,7 @@ let dur = `${hrs}${min}${sec}`
 
 	const song = {
 		id: video.id,
-		title: video.title,
+		title: Util.escapeMarkdown(video.title),
 		duration: dur,
 		url: `https://www.youtube.com/watch?v=${video.id}`
 	};
@@ -312,7 +312,7 @@ let dur = `${hrs}${min}${sec}`
 		serverQueue.songs.push(song);
 		if (playlist) return undefined;
 		if(!args2) return msg.channel.send(':x: **I don`t get any search result.**');
-        else return msg.channel.send(`:white_check_mark: \`\`${song.title}\`\`[\`\`${song.duration}\`\`] Added to **.A-Queue**!`);
+        	else return msg.channel.send(`:white_check_mark: \`\`${song.title}\`\`[\`\`${song.duration}\`\`] Added to **.A-Queue**!`);
         }
         return undefined;
 }
@@ -326,11 +326,12 @@ function play(guild, song) {
 		return serverQueue.textChannel.send(`:stop_button: **.A-Queue** finished!!`);
 	}
 	console.log(serverQueue.songs);
-  if(serverQueue.repeating) {
-	serverQueue.textChannel.send(`:white_check_mark: .A-Music Repeating **${song.title}**`);
-  } else {
-	serverQueue.textChannel.send(`:white_check_mark: .A-Music playing **${song.title}**`);
-}
+	
+	if(serverQueue.repeating) {
+		serverQueue.textChannel.send(`:white_check_mark: .A-Music Repeating **${song.title}**`);
+	} else {
+		serverQueue.textChannel.send(`:white_check_mark: .A-Music playing **${song.title}**`);
+	}
 
 	const dispatcher = serverQueue.connection.playStream(ytdl(song.url))
 		.on('end', reason => {
@@ -358,37 +359,5 @@ function formatTime(duration) {
 
   return (hours > 0 ? hours + ":" : "") + minutes + ":" + seconds;
 }
-
-function bar(precent) {
-        var str = '';
-
-        for (var i = 0; i < 12; i++) {
-          let pre = precent
-          let res = pre * 12;
-
-          res = parseInt(res)
-
-          if(i == res){
-            str+="\uD83D\uDD18";
-          }
-          else {
-            str+="▬";
-          }
-        }
-
-        return str;
-      }
-
-function volumeIcon(volume) {
-
-        if(volume == 0)
-           return "\uD83D\uDD07";
-       if(volume < 30)
-           return "\uD83D\uDD08";
-       if(volume < 70)
-           return "\uD83D\uDD09";
-       return "\uD83D\uDD0A";
-
-      }
 
 client.login(process.env.BOT_TOKEN);
