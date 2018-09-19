@@ -54,7 +54,7 @@ client.on('reconnecting', () => console.log('I am reconnecting now!'));
 let cmds = {
 	play: { cmd: 'play', a: ['p'] },
 	stop: { cmd: 'stop', a: ['s'] },
-	join: { cmd: 'join' },
+	join: { cmd: 'join', a: ['j'] },
 	volume: { cmd: 'volume', a: ['vol'] },
 	queue: { cmd: 'queue', a: ['q'] },
 	repeat: { cmd: 'repeat', a: ['re'] },
@@ -186,11 +186,11 @@ client.on('message', async msg => {
 	if((i) > 8) {
 		let st = `${i+1}`
 		console.log(st);
-		let n1 = conv.toWords(st[0])
-		let n2 = conv.toWords(st[1])
+		let n1 = conv.toWords(st[0]);
+		let n2 = conv.toWords(st[1]);
 		num = `:${n1}::${n2}:`
         } else {
-		let n = conv.toWords(i+1)
+		let n = conv.toWords(i+1);
 		num = `:${n}:`
         }
 		text += `**[${++index}] -** ${serverQueue.songs[i].title} [\`\`${serverQueue.songs[i].duration}\`\`]\n`
@@ -200,7 +200,8 @@ client.on('message', async msg => {
         .setAuthor(`.A-Queue`, `https://goo.gl/jHxBTt`)
         .setTitle("**.A-Queue List :**")
         .addField('__Now Playing__  :musical_note: ' , `**${serverQueue.songs[0].title}**`,true)
-        .addField(':musical_score:  __UP NEXT__ :musical_score: ' , `${text}`);
+        .addField(':musical_score:  __UP NEXT__ :musical_score: ' , `${text}`)
+	.setFooter('#skipto [number]');
         return msg.channel.sendEmbed(embedqu);
     } else if(cmd === 'repeat') {
 	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
@@ -221,28 +222,27 @@ client.on('message', async msg => {
         if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could skip for you.**").then(message =>{message.delete(5000)});
         if(serverQueue.repeating) {
             serverQueue.repeating = false;
-            serverQueue.connection.dispatcher.end('ForceSkipping..')
+            serverQueue.connection.dispatcher.end('ForceSkipping..');
             serverQueue.repeating = true;
         } else {
             serverQueue.connection.dispatcher.end('Skip command has been used!');
         }
-    } ekse if (cmd === 'skipto') {
+    } else if (cmd === 'skipto') {
         if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}skipto command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)});
         if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could skipto for you.**").then(message =>{message.delete(5000)});
-        if(serverQueue.repeating) return msg.channel.send('**You can\'t skip, because repeating mode is on, run ' + `\`${prefix}repeat\` to turn off.**`);
+        if(serverQueue.repeating) return msg.channel.send(`**You can\'t skipto, because repeating mode is on, run \`\`${PREFIX}repeat\`\` to turn off.**`);
         if(!args[0] || isNaN(args[0])) return msg.channel.send('**Please input song number to skip to it, run `#queue` to see songs numbers.**');
         let sN = parseInt(args[0]) - 1;
         if(!serverQueue.songs[sN]) return msg.channel.send('**There is no song with this number.**');
         let i = 1;
-        msg.channel.send(`:white_check_mark: .A-Music playing **${serverQueue.songs[sN].title}**`);
         while (i < sN) {
         i++;
         serverQueue.songs.shift();
-      }
-      serverQueue.connection.dispatcher.end('SkippingTo..')
-        return undefined;  
+        }
+        serverQueue.connection.dispatcher.end('SkippingTo..');
+        return msg.channel.send(`:white_check_mark: .A-Music playing **${serverQueue.songs[sN].title}**`);  
     }  else if (cmd === 'pause') {
 	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}pause command in ${msg.guild.name}`);
