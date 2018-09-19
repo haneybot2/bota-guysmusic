@@ -68,7 +68,7 @@ Object.keys(cmds).forEach(key => {
     	var value = cmds[key];
     	var command = value.cmd;
     	client.commands.set(command, command);
-	if(value.a) {
+	if (value.a) {
 		  value.a.forEach(alias => {
 		  client.aliases.set(alias, command)
 	})
@@ -183,7 +183,7 @@ client.on('message', async msg => {
         let text = '';
         for (var i = 0; i < serverQueue.songs.length; i++) {
 	let num;
-	if((i) > 8) {
+	if ((i) > 8) {
 		let st = `${i+1}`
 		console.log(st);
 		let n1 = conv.toWords(st[0]);
@@ -201,11 +201,9 @@ client.on('message', async msg => {
         .setTitle("**.A-Queue List :**")
         .addField('__Now Playing__  :musical_note: ' , `**${serverQueue.songs[0].title}**`,true)
         .addField(':musical_score:  __UP NEXT__ :musical_score: ' , `${text}`)
-	if (!serverQueue.songs || serverQueue.songs > 2) {
-		embedqu.setFooter('#skipto [number]')
-	} 
+	.setFooter(`${PREFIX}skipto [number]`);
         return msg.channel.sendEmbed(embedqu);
-    } else if(cmd === 'repeat') {
+    } else if (cmd === 'repeat') {
 	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}repeat,' command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)});
@@ -222,7 +220,7 @@ client.on('message', async msg => {
         console.log(`${msg.author.tag} has been used the ${PREFIX}skip command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)});
         if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could skip for you.**").then(message =>{message.delete(5000)});
-        if(serverQueue.repeating) {
+        if (serverQueue.repeating) {
             serverQueue.repeating = false;
             serverQueue.connection.dispatcher.end('ForceSkipping..');
             serverQueue.repeating = true;
@@ -234,11 +232,11 @@ client.on('message', async msg => {
         console.log(`${msg.author.tag} has been used the ${PREFIX}skipto command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)});
         if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could skipto for you.**").then(message =>{message.delete(5000)});
-        if(!serverQueue.songs || serverQueue.songs < 2) return msg.channel.send('There is no music to skip to.');
-        if(serverQueue.repeating) return msg.channel.send(`**You can\'t skipto, because repeating mode is on, run \`\`${PREFIX}repeat\`\` to turn off.**`);
-        if(!args2[0] || isNaN(args2[0])) return msg.channel.send('**Please input song number to skip to it, run `#queue` to see songs numbers.**');
+        if (!serverQueue.songs || serverQueue.songs < 2) return msg.channel.send('There is no music to skip to.');
+        if (serverQueue.repeating) return msg.channel.send(`**You can\'t skipto, because repeating mode is on, run \`\`${PREFIX}repeat\`\` to turn off.**`);
+        if (!args2[0] || isNaN(args2[0])) return msg.channel.send('**Please input song number to skip to it, run `#queue` to see songs numbers.**');
         let sN = parseInt(args2[0]) - 1;
-        if(!serverQueue.songs[sN]) return msg.channel.send('**There is no song with this number.**');
+        if (!serverQueue.songs[sN]) return msg.channel.send('**There is no song with this number.**');
         let i = 1;
         while (i < sN) {
         i++;
@@ -313,7 +311,7 @@ let dur = `${hrs}${min}${sec}`
 	} else {
 		serverQueue.songs.push(song);
 		if (playlist) return undefined;
-		if(!args2) return msg.channel.send(':x: **I don`t get any search result.**');
+		if (!args2) return msg.channel.send(':x: **I don`t get any search result.**');
         	else return msg.channel.send(`:white_check_mark: \`\`${song.title}\`\`[\`\`${song.duration}\`\`] Added to **.A-Queue**!`);
         }
         return undefined;
@@ -329,7 +327,7 @@ function play(guild, song) {
 	}
 	console.log(serverQueue.songs);
 	
-	if(serverQueue.repeating) {
+	if (serverQueue.repeating) {
 		serverQueue.textChannel.send(`:white_check_mark: .A-Music Repeating **${song.title}**`);
 	} else {
 		serverQueue.textChannel.send(`:white_check_mark: .A-Music playing **${song.title}**`);
@@ -339,82 +337,13 @@ function play(guild, song) {
 		.on('end', reason => {
 			if (reason === 'Stream is not generating quickly enough.') console.log('Song ended.');
 			else console.log(reason);
-			if(serverQueue.repeating) return play(guild, serverQueue.songs[0])
+			if (serverQueue.repeating) return play(guild, serverQueue.songs[0])
 			serverQueue.songs.shift();
 			play(guild, serverQueue.songs[0]);
 		})
 		.on('error', error => console.error(error));
 	dispatcher.setVolumeLogarithmic(serverQueue.volume / 150);
 
-
-}
-
-function embedFormat(queue) {
-
-	if(!queue || !queue.songs) {
-          return "No music playing\n\u23F9 "+bar(-1)+" "+volumeIcon(100);
-        } else if(!queue.playing) {
-          return "No music playing\n\u23F9 "+bar(-1)+" "+volumeIcon(queue.volume);
-        } else {
-
-          let progress = (queue.connection.dispatcher.time / queue.songs[0].msDur);
-          let prog = bar(progress);
-          let volIcon = volumeIcon(queue.volume);
-          let playIcon = (queue.connection.dispatcher.paused ? "\u23F8" : "\u25B6")
-          let dura = queue.songs[0].duration;
-
-          return playIcon + ' ' + prog + ' `[' + formatTime(queue.connection.dispatcher.time) + '/' + dura + ']`' + volIcon;
-
-
-        }
-
-}
-
-function formatTime(duration) {
-	var milliseconds = parseInt((duration % 1000) / 100),
-	seconds = parseInt((duration / 1000) % 60),
-	minutes = parseInt((duration / (1000 * 60)) % 60),
-	hours = parseInt((duration / (1000 * 60 * 60)) % 24);
-
-	hours = (hours < 10) ? "0" + hours : hours;
-	minutes = (minutes < 10) ? "0" + minutes : minutes;
-	seconds = (seconds < 10) ? "0" + seconds : seconds;
-
-	return (hours > 0 ? hours + ":" : "") + minutes + ":" + seconds;
-}
-
-function bar(precent) {
-
-	var str = '';
-
-	for (var i = 0; i < 12; i++) {
-
-          let pre = precent
-          let res = pre * 12;
-
-          res = parseInt(res)
-
-          if(i == res){
-            str+="\uD83D\uDD18";
-          }
-          else {
-            str+="▬";
-          }
-        }
-
-        return str;
-
-}
-
-function volumeIcon(volume) {
-
-        if(volume == 0)
-           return "\uD83D\uDD07";
-       if(volume < 30)
-           return "\uD83D\uDD08";
-       if(volume < 70)
-           return "\uD83D\uDD09";
-       return "\uD83D\uDD0A";
 
 }
 
