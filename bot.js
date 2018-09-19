@@ -10,10 +10,11 @@ const gif = require('gif-search');
 const nodeopus = require('node-opus');
 const conv = require('number-to-words');
 const ffmpeg = require('ffmpeg');
-const client = new Discord.Client({disableEveryone: true});
+const PREFIX = process.env.PREFIX
+const client = new Discord.Client({ disableEveryone: true});
+
 client.commands = new Discord.Collection();
 client.aliases = new Discord.Collection();
-const PREFIX = '#';
 
 
 client.on('ready', () => {
@@ -50,6 +51,29 @@ client.on('disconnect', () => console.log('I just disconnected, making sure you 
 
 client.on('reconnecting', () => console.log('I am reconnecting now!'));
 
+let cmds = {
+	play: { cmd: 'play', a: ['p'] },
+	stop: { cmd: 'stop', a: ['s'] },
+	join: { cmd: 'join' },
+	volume: { cmd: 'volume', a: ['vol'] },
+	queue: { cmd: 'queue', a: ['q'] },
+	repeat: { cmd: 'repeat', a: ['re'] },
+	skip: { cmd: 'skip' },
+	skipto: { cmd: 'skipto', a: ['sto'] },
+	pause: { cmd: 'pause' },
+	resume: { cmd: 'resume' }
+};
+
+Object.keys(cmds).forEach(key => {
+    	var value = cmds[key];
+    	var command = value.cmd;
+    	client.commands.set(command, command);
+	if(value.a) {
+		  value.a.forEach(alias => {
+		  client.aliases.set(alias, command)
+	})
+}})
+
 client.on('message', async msg => { 
     if (msg.author.bot) return undefined;
     if (!msg.content.startsWith(PREFIX)) return undefined;
@@ -63,28 +87,6 @@ client.on('message', async msg => {
     const serverQueue = queue.get(msg.guild.id);
     const voiceChannel = msg.member.voiceChannel;
     const command = args2.shift().toLowerCase();
-
-    let cmds = {
-	play: { cmd: 'play', a: ['p'] },
-	stop: { cmd: 'stop', a: ['s'] },
-	join: { cmd: 'join' },
-	volume: { cmd: 'volume', a: ['vol'] },
-	queue: { cmd: 'queue', a: ['q'] },
-	repeat: { cmd: 'repeat', a: ['re'] },
-	skip: { cmd: 'skip' },
-	pause: { cmd: 'pause' },
-	resume: { cmd: 'resume' }
-    };
-
-    Object.keys(cmds).forEach(key => {
-    	var value = cmds[key];
-    	var command = value.cmd;
-    	client.commands.set(command, command);
-	if(value.a) {
-		  value.a.forEach(alias => {
-		  client.aliases.set(alias, command)
-	})
-	}})
 
     var cmd = client.commands.get(command) || client.commands.get(client.aliases.get(command));
 
@@ -224,6 +226,23 @@ client.on('message', async msg => {
         } else {
             serverQueue.connection.dispatcher.end('Skip command has been used!');
         }
+    } ekse if (cmd === 'skipto') {
+        if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
+        console.log(`${msg.author.tag} has been used the ${PREFIX}skipto command in ${msg.guild.name}`);
+        if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)});
+        if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could skipto for you.**").then(message =>{message.delete(5000)});
+        if(serverQueue.repeating) return msg.channel.send('**You can\'t skip, because repeating mode is on, run ' + `\`${prefix}repeat\` to turn off.**`);
+        if(!args[0] || isNaN(args[0])) return msg.channel.send('**Please input song number to skip to it, run `#queue` to see songs numbers.**');
+        let sN = parseInt(args[0]) - 1;
+        if(!serverQueue.songs[sN]) return msg.channel.send('**There is no song with this number.**');
+        let i = 1;
+        msg.channel.send(`:white_check_mark: .A-Music playing **${serverQueue.songs[sN].title}**`);
+        while (i < sN) {
+        i++;
+        serverQueue.songs.shift();
+      }
+      serverQueue.connection.dispatcher.end('SkippingTo..')
+        return undefined;  
     }  else if (cmd === 'pause') {
 	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}pause command in ${msg.guild.name}`);
@@ -325,5 +344,50 @@ function play(guild, song) {
 
 
 }
+
+function formatTime(duration) {
+  var milliseconds = parseInt((duration % 1000) / 100),
+    seconds = parseInt((duration / 1000) % 60),
+    minutes = parseInt((duration / (1000 * 60)) % 60),
+    hours = parseInt((duration / (1000 * 60 * 60)) % 24);
+
+  hours = (hours < 10) ? "0" + hours : hours;
+  minutes = (minutes < 10) ? "0" + minutes : minutes;
+  seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+  return (hours > 0 ? hours + ":" : "") + minutes + ":" + seconds;
+}
+
+function bar(precent) {
+        var str = '';
+
+        for (var i = 0; i < 12; i++) {
+          let pre = precent
+          let res = pre * 12;
+
+          res = parseInt(res)
+
+          if(i == res){
+            str+="\uD83D\uDD18";
+          }
+          else {
+            str+="▬";
+          }
+        }
+
+        return str;
+      }
+
+function volumeIcon(volume) {
+
+        if(volume == 0)
+           return "\uD83D\uDD07";
+       if(volume < 30)
+           return "\uD83D\uDD08";
+       if(volume < 70)
+           return "\uD83D\uDD09";
+       return "\uD83D\uDD0A";
+
+      }
 
 client.login(process.env.BOT_TOKEN);
