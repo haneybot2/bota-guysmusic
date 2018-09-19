@@ -140,7 +140,7 @@ client.on('message', async msg => {
                     var video = await youtube.getVideoByID(videos[videoIndex - 1].id);
                 } catch (err) {
                     console.error(err);
-                    return msg.channel.send(":x:  **I don`t get any search result.**").then(message =>{message.delete(5000)});
+                    return msg.channel.send(':x: **I don`t get any search result.**').then(message =>{message.delete(5000)});
                 }
             }
 
@@ -249,6 +249,7 @@ client.on('message', async msg => {
 
 async function handleVideo(video, msg, voiceChannel, playlist = false) {
 	const serverQueue = queue.get(msg.guild.id);
+	const args2 = msg.content.slice(PREFIX.length).trim().split(/ +/g);
 
 
 //	console.log('yao: ' + Util.escapeMarkdown(video.thumbnailUrl));
@@ -290,6 +291,7 @@ let dur = `${hrs}${min}${sec}`
 	} else {
 		serverQueue.songs.push(song);
 		if (playlist) return undefined;
+		if(!args2) return msg.channel.send(':x: **I don`t get any search result.**');
         else return msg.channel.send(`:white_check_mark: \`\`${song.title}\`\`[\`\`${song.duration}\`\`] Added to **.A-Queue**!`);
         }
         return undefined;
