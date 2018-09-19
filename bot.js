@@ -63,7 +63,7 @@ client.on('message', async msg => {
     const serverQueue = queue.get(msg.guild.id);
     const voiceChannel = msg.member.voiceChannel;
     const command = args2.shift().toLowerCase();
-	
+
     let cmds = {
 	play: { cmd: 'play', a: ['p'] },
 	stop: { cmd: 'stop', a: ['s'] },
@@ -75,6 +75,7 @@ client.on('message', async msg => {
 	pause: { cmd: 'pause' },
 	resume: { cmd: 'resume' }
     };
+
     Object.keys(cmds).forEach(key => {
     	var value = cmds[key];
     	var command = value.cmd;
@@ -84,6 +85,7 @@ client.on('message', async msg => {
 		  client.aliases.set(alias, command)
 	})
 	}})
+
     var cmd = client.commands.get(command) || client.commands.get(client.aliases.get(command));
 
     if (cmd === 'play') {
@@ -91,16 +93,16 @@ client.on('message', async msg => {
         console.log(`${msg.author.tag} has been used the ${PREFIX}play command in ${msg.guild.name}`);
         let args1 = msg.content.split(' ').slice(1);
         if (!voiceChannel) return msg.channel.send(":x:** You need to be in a voice channel**!");
-		const permissions = voiceChannel.permissionsFor(msg.client.user);
-		if (!permissions.has('CONNECT')) {
-                        return msg.channel.send(":no_entry_sign: **I am unable to connect **!");
-		}
-		if (!permissions.has('SPEAK')) {
-			return msg.channel.send("**I can not speak in this room, please make sure that i have full perms for this**!");
-                }
-		if (text1 == "") {
-			return msg.channel.send("**:x: Please specify a filename.**");
-		}
+        const permissions = voiceChannel.permissionsFor(msg.client.user);
+        if (!permissions.has('CONNECT')) {
+		return msg.channel.send(":no_entry_sign: **I am unable to connect **!");
+        }
+        if (!permissions.has('SPEAK')) {
+		return msg.channel.send("**I can not speak in this room, please make sure that i have full perms for this**!");
+        }
+        if (text1 == "") {
+		return msg.channel.send("**:x: Please specify a filename.**");
+        }
         
         if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
             const playlist = await youtube.getPlaylist(url);
@@ -123,9 +125,7 @@ client.on('message', async msg => {
                     .setAuthor(`.A-Music`, `https://goo.gl/jHxBTt`)
                     .setTitle(`**Song selection** :`)
                     .setDescription(`${videos.map(video2 => `[**${++index} **] \`${video2.title}\``).join('\n')}`);
-			
-		    		msg.channel.sendEmbed(embed1).then(message =>{message.delete(15000)});
-			
+                    msg.channel.sendEmbed(embed1).then(message =>{message.delete(15000)});	
                     try {
                         var response = await msg.channel.awaitMessages(msg2 => msg2.content > 0 && msg2.content < 11, {
                             maxMatches: 1,
@@ -248,12 +248,15 @@ client.on('message', async msg => {
 });
 
 async function handleVideo(video, msg, voiceChannel, playlist = false) {
-	const serverQueue = queue.get(msg.guild.id);
-	let hrs = video.duration.hours == 1 ? (video.duration.hours > 9 ? `${video.duration.hours}:` : `0${video.duration.hours}:`) : '';
-	let min = video.duration.minutes > 9 ? `${video.duration.minutes}:` : `0${video.duration.minutes}:`;
-	let sec = video.duration.seconds > 9 ? `${video.duration.seconds}` : `0${video.duration.seconds}`;
-	let dur = `${hrs}${min}${sec}`;
-	console.log(video);
+	const serverQueue = active.get(msg.guild.id);
+
+
+//	console.log('yao: ' + Util.escapeMarkdown(video.thumbnailUrl));
+
+let hrs = video.duration.hours == 1 ? (video.duration.hours > 9 ? `${video.duration.hours}:` : `0${video.duration.hours}:`) : '';
+let min = video.duration.minutes > 9 ? `${video.duration.minutes}:` : `0${video.duration.minutes}:`;
+let sec = video.duration.seconds > 9 ? `${video.duration.seconds}` : `0${video.duration.seconds}`;
+let dur = `${hrs}${min}${sec}`
 
 	const song = {
 		id: video.id,
