@@ -201,14 +201,16 @@ client.on('message', async msg => {
         .setTitle("**.A-Queue List :**")
         .addField('__Now Playing__  :musical_note: ' , `**${serverQueue.songs[0].title}**`,true)
         .addField(':musical_score:  __UP NEXT__ :musical_score: ' , `${text}`)
-	.setFooter('#skipto [number]');
+	if (!serverQueue.songs || serverQueue.songs > 2) {
+		embedqu.setFooter('#skipto [number]')
+	} 
         return msg.channel.sendEmbed(embedqu);
     } else if(cmd === 'repeat') {
 	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}repeat,' command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)});
         if (!serverQueue) return msg.channel.send(':information_source: **There is nothing playing that I could repeat for you.**').then(message =>{message.delete(5000)});
-        if(serverQueue.repeating) {
+        if (serverQueue.repeating) {
 		serverQueue.repeating = false;
 		return msg.channel.send(':repeat: **.A-Repeating Mode** (`False`)');
         } else {
