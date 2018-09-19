@@ -248,7 +248,7 @@ client.on('message', async msg => {
 });
 
 async function handleVideo(video, msg, voiceChannel, playlist = false) {
-	const serverQueue = active.get(msg.guild.id);
+	const serverQueue = queue.get(msg.guild.id);
 
 
 //	console.log('yao: ' + Util.escapeMarkdown(video.thumbnailUrl));
