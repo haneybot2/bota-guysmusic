@@ -232,6 +232,8 @@ client.on('message', async msg => {
         console.log(`${msg.author.tag} has been used the ${PREFIX}skipto command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)});
         if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could skipto for you.**").then(message =>{message.delete(5000)});
+        let serverQueue = queue.get(msg.guild.id);
+        if(!serverQueue.songs || serverQueue.songs < 2) return msg.channel.send('There is no music to skip to.');
         if(serverQueue.repeating) return msg.channel.send(`**You can\'t skipto, because repeating mode is on, run \`\`${PREFIX}repeat\`\` to turn off.**`);
         if(!args2[0] || isNaN(args2[0])) return msg.channel.send('**Please input song number to skip to it, run `#queue` to see songs numbers.**');
         let sN = parseInt(args2[0]) - 1;
