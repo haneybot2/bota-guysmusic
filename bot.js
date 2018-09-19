@@ -6,14 +6,14 @@ const YouTube = require('simple-youtube-api');
 const youtube = new YouTube("AIzaSyAdORXg7UZUo7sePv97JyoDqtQVi3Ll0b8");
 const queue = new Map();
 const ytdl = require('ytdl-core');
-const gif = require("gif-search");
+const gif = require('gif-search');
 const nodeopus = require('node-opus');
-const conv = require('number-to-words')
+const conv = require('number-to-words');
 const ffmpeg = require('ffmpeg');
 const client = new Discord.Client({disableEveryone: true});
 client.commands = new Discord.Collection();
 client.aliases = new Discord.Collection();
-const PREFIX = "#";
+const PREFIX = '#';
 
 
 client.on('ready', () => {
