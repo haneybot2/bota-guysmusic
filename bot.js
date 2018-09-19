@@ -243,7 +243,7 @@ client.on('message', async msg => {
         serverQueue.songs.shift();
         }
         serverQueue.connection.dispatcher.end('SkippingTo..');
-        return msg.channel.send(`:white_check_mark: .A-Music playing **${serverQueue.songs[sN].title}**`);  
+        return undefined;  
     }  else if (cmd === 'pause') {
 	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}pause command in ${msg.guild.name}`);
