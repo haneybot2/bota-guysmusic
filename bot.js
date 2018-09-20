@@ -169,7 +169,7 @@ client.on('message', async msg => {
         if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}volume command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)});
-        if (!serverQueue) return msg.channel.send(':information_source: **There is nothing playing.**').then(message =>{message.delete(5000)});
+        if (!serverQueue) return msg.channel.send(':information_source: **There is nothing playing that I could volume for you.').then(message =>{message.delete(5000)});
         if (!args[1]) return msg.channel.send(`:speaker: **Current volume is:** ${serverQueue.volume}`);
         if (parseInt(args2[0]) > 200) return msg.channel.send('**You can\'t set the volume more than `200`.**');
         serverQueue.volume = args2[0];
@@ -232,7 +232,7 @@ client.on('message', async msg => {
         console.log(`${msg.author.tag} has been used the ${PREFIX}skipto command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)});
         if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could skipto for you.**").then(message =>{message.delete(5000)});
-        if (!serverQueue.songs || serverQueue.songs < 2) return msg.channel.send('There is no music to skip to.');
+        if (!serverQueue.songs || serverQueue.songs < 2) return msg.channel.send('**There is nothing playing to skip to.**');
         if (serverQueue.repeating) return msg.channel.send(`**You can\'t skipto, because repeating mode is on, run \`\`${PREFIX}repeat\`\` to turn off.**`);
         if (!args2[0] || isNaN(args2[0])) return msg.channel.send('**Please input song number to skip to it, run `#queue` to see songs numbers.**');
         let sN = parseInt(args2[0]) - 1;
@@ -252,7 +252,7 @@ client.on('message', async msg => {
         serverQueue.connection.dispatcher.pause();
         return msg.channel.send('k :unamused:');
 	}
-        return msg.channel.send(':information_source: **There is nothing playing that I could pause for you.**').then(message =>{message.delete(5000)})
+        return msg.channel.send(':information_source: **There is nothing playing that I could pause for you.**').then(message =>{message.delete(5000)});
     } else if (cmd === 'resume') {
 	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
 	console.log(`${msg.author.tag} has been used the ${PREFIX}resume command in ${msg.guild.name}`);
@@ -261,7 +261,7 @@ client.on('message', async msg => {
         serverQueue.connection.dispatcher.resume();
         return msg.channel.send('k :slight_smile:');
 	}
-	return msg.channel.send(':information_source: **There is nothing playing that I could resume for you.**').then(message =>{message.delete(5000)})
+	return msg.channel.send(':information_source: **There is nothing playing that I could resume for you.**').then(message =>{message.delete(5000)});
     }
 
     return undefined;
