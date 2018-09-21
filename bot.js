@@ -3,7 +3,7 @@ const Util = require('discord.js');
 const getYoutubeID = require('get-youtube-id');
 const fetchVideoInfo = require('youtube-info');
 const YouTube = require('simple-youtube-api');
-const youtube = new YouTube("AIzaSyAdORXg7UZUo7sePv97JyoDqtQVi3Ll0b8");
+const youtube = new YouTube("AIzaSyDeoIH0u1e72AtfpwSKKOSy3IPp2UHzqi4");
 const queue = new Map();
 const ytdl = require('ytdl-core');
 const gif = require('gif-search');
@@ -13,9 +13,10 @@ const ffmpeg = require('ffmpeg');
 const PREFIX = process.env.PREFIX
 const client = new Discord.Client({ disableEveryone: true});
 
-client.commands = new Discord.Collection();
-client.aliases = new Discord.Collection();
 
+client.commands = new Discord.Collection();
+
+client.aliases = new Discord.Collection();
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -269,8 +270,8 @@ client.on('message', async msg => {
 
 async function handleVideo(video, msg, voiceChannel, playlist = false) {
 	const serverQueue = queue.get(msg.guild.id);
-	const args2 = msg.content.slice(PREFIX.length).trim().split(/ +/g);
-
+	const args = msg.content.slice(PREFIX.length).trim().split(/ +/g);
+	console.log(video);
 
 //	console.log('yao: ' + Util.escapeMarkdown(video.thumbnailUrl));
 
@@ -311,7 +312,7 @@ let dur = `${hrs}${min}${sec}`
 	} else {
 		serverQueue.songs.push(song);
 		if (playlist) return undefined;
-		if (!args2) return msg.channel.send(':x: **I don`t get any search result.**');
+		if (!args) return msg.channel.send(':x: **I don`t get any search result.**');
         	else return msg.channel.send(`:white_check_mark: \`\`${song.title}\`\`[\`\`${song.duration}\`\`] Added to **.A-Queue**!`);
         }
         return undefined;
@@ -351,7 +352,7 @@ function embedFormat(queue) {
 
 	if (!queue || !queue.songs) {
 		return "No music playing\n\u23F9 "+bar(-1)+" "+volumeIcon(100);
-	} else if(!queue.playing) {
+	} else if (!queue.playing) {
 		return "No music playing\n\u23F9 "+bar(-1)+" "+volumeIcon(queue.volume);
 	} else {
 
