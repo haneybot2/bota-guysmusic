@@ -127,8 +127,7 @@ client.on('message', async msg => {
                     .setColor('BLACK')
                     .setAuthor(`.A-Music`, `https://goo.gl/jHxBTt`)
                     .setTitle(`**Song selection** :`)
-                    .setDescription(`${videos.map(video2 => `[**${++index} **] \`${video2.title}\``).join('\n')}`)
-		    .setFooter(`.A-GUYS Server`, `https://goo.gl/jHxBTt`);
+                    .setDescription(`${videos.map(video2 => `[**${++index} **] \`${video2.title}\``).join('\n')}`);
                     msg.channel.sendEmbed(embed1).then(message =>{message.delete(15000)});	
 					// eslint-disable-next-line max-depth
 					try {
@@ -154,7 +153,7 @@ client.on('message', async msg => {
         if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}stop command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)});
-        if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could stop for you.**").then(message =>{message.delete(5000)});
+        if (!serverQueue) return msg.channel.send(":information_source: **There is no music to stop to.**").then(message =>{message.delete(5000)});
         serverQueue.songs = [];
         serverQueue.connection.dispatcher.end('Stop command has been used!');
         return msg.channel.send('k :cry:');
@@ -171,7 +170,7 @@ client.on('message', async msg => {
         if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}volume command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)});
-        if (!serverQueue) return msg.channel.send(':information_source: **There is nothing playing that I could volume for you.').then(message =>{message.delete(5000)});
+        if (!serverQueue) return msg.channel.send(':information_source: **There is no music playing to set volume.**').then(message =>{message.delete(5000)});
         if (!args[1]) return msg.channel.send(`:speaker: **Current volume is:** ${serverQueue.volume}`);
         if (parseInt(args2[0]) > 200) return msg.channel.send('**You can\'t set the volume more than `200`.**');
         serverQueue.volume = args2[0];
@@ -209,7 +208,7 @@ client.on('message', async msg => {
 	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}repeat,' command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)});
-        if (!serverQueue) return msg.channel.send(':information_source: **There is nothing playing that I could repeat for you.**').then(message =>{message.delete(5000)});
+        if (!serverQueue) return msg.channel.send(':information_source: **There is no music playing to repeat it.**').then(message =>{message.delete(5000)});
         if (serverQueue.repeating) {
 		serverQueue.repeating = false;
 		return msg.channel.send(':repeat: **.A-Repeating Mode** (`False`)');
@@ -221,7 +220,7 @@ client.on('message', async msg => {
         if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}skip command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)});
-        if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could skip for you.**").then(message =>{message.delete(5000)});
+        if (!serverQueue) return msg.channel.send(":information_source: **There is no music to skip to.**").then(message =>{message.delete(5000)});
         if (serverQueue.repeating) {
             serverQueue.repeating = false;
             serverQueue.connection.dispatcher.end('ForceSkipping..');
@@ -233,10 +232,10 @@ client.on('message', async msg => {
         if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
         console.log(`${msg.author.tag} has been used the ${PREFIX}skipto command in ${msg.guild.name}`);
         if (!msg.member.voiceChannel) return msg.channel.send(":x:**You are not in a voice channel**!").then(message =>{message.delete(5000)});
-        if (!serverQueue) return msg.channel.send(":information_source: **There is nothing playing that I could skipto for you.**").then(message =>{message.delete(5000)});
+        if (!serverQueue) return msg.channel.send(":information_source: **There is no music to skip to.**").then(message =>{message.delete(5000)});
         if (!serverQueue.songs || serverQueue.songs < 2) return msg.channel.send('**There is nothing playing to skip to.**');
         if (serverQueue.repeating) return msg.channel.send(`**You can\'t skipto, because repeating mode is on, run \`\`${PREFIX}repeat\`\` to turn off.**`);
-        if (!args2[0] || isNaN(args2[0])) return msg.channel.send('**Please input song number to skip to it, run `#queue` to see songs numbers.**');
+        if (!args2[0] || isNaN(args2[0])) return msg.channel.send(`**Please input song number to skip to it, run \`\`${PREFIX}queue\`\` to see songs numbers.**`);
         let sN = parseInt(args2[0]) - 1;
         if (!serverQueue.songs[sN]) return msg.channel.send('**There is no song with this number.**');
         let i = 1;
@@ -254,7 +253,7 @@ client.on('message', async msg => {
         serverQueue.connection.dispatcher.pause();
         return msg.channel.send('k :unamused:');
 	}
-        return msg.channel.send(':information_source: **There is nothing playing that I could pause for you.**').then(message =>{message.delete(5000)});
+        return msg.channel.send(':information_source: **No music playing to pause.*').then(message =>{message.delete(5000)});
     } else if (cmd === 'resume') {
 	if (!msg.member.hasPermission('MANAGE_MESSAGES')) return undefined;
 	console.log(`${msg.author.tag} has been used the ${PREFIX}resume command in ${msg.guild.name}`);
@@ -263,7 +262,7 @@ client.on('message', async msg => {
         serverQueue.connection.dispatcher.resume();
         return msg.channel.send('k :slight_smile:');
 	}
-	return msg.channel.send(':information_source: **There is nothing playing that I could resume for you.**').then(message =>{message.delete(5000)});
+	return msg.channel.send(':information_source: **No music paused to resume.**').then(message =>{message.delete(5000)});
     }
 
     return undefined;
