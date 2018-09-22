@@ -28,15 +28,28 @@
     "youtube-info": "^1.2.0",
     "ytdl-core": "^0.24.0"
   },
-
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/synicalsyntax/discord.js-heroku.git"
+  },
   "keywords": [
     "heroku",
     "discord.js"
   ],
-  "author": "",
+  "author": "synicalsyntax",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/synicalsyntax/discord.js-heroku/issues"
   },
+    "devDependencies": {
+    "eslint": "^4.0.0",
+    "eslint-config-aqua": "^1.0.0"
+  },
+  "eslintConfig": {
+    "extends": "aqua",
+    "rules": {
+      "no-console": 0
+    }
+  }
   "homepage": "https://github.com/synicalsyntax/discord.js-heroku#readme"
 }
