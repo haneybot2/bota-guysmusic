@@ -1,10 +1,31 @@
 {
   "name": "discord.js-heroku",
   "version": "1.0.0",
-  "description": "Discord.js bot on Heroku",
+  "description": "An in-depth guide on deploying your Discord.js bot on Heroku",
   "main": "bot.js",
+  "engines": {
+    "node": "^8.4.0",
+    "npm": "^6.4.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node bot.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/synicalsyntax/discord.js-heroku.git"
+  },
+  "keywords": [
+    "heroku",
+    "discord.js"
+  ],
+  "author": "synicalsyntax",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/synicalsyntax/discord.js-heroku/issues"
+  },
+  "homepage": "https://github.com/synicalsyntax/discord.js-heroku#readme",
   "dependencies": {
-    "node": "8.x",
     "discord.js": "^11.3.2",
     "get-youtube-id": "^1.0.0",
     "jimp": "^0.2.28",
@@ -28,20 +49,7 @@
     "youtube-info": "^1.2.0",
     "ytdl-core": "^0.24.0"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/synicalsyntax/discord.js-heroku.git"
-  },
-  "keywords": [
-    "heroku",
-    "discord.js"
-  ],
-  "author": "synicalsyntax",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/synicalsyntax/discord.js-heroku/issues"
-  },
-    "devDependencies": {
+  "devDependencies": {
     "eslint": "^4.0.0",
     "eslint-config-aqua": "^1.0.0"
   },
@@ -51,5 +59,4 @@
       "no-console": 0
     }
   }
-  "homepage": "https://github.com/synicalsyntax/discord.js-heroku#readme"
 }
