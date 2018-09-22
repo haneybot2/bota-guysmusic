@@ -127,7 +127,8 @@ client.on('message', async msg => {
                     .setColor('BLACK')
                     .setAuthor(`.A-Music`, `https://goo.gl/jHxBTt`)
                     .setTitle(`**Song selection** :`)
-                    .setDescription(`${videos.map(video2 => `[**${++index} **] \`${video2.title}\``).join('\n')}`);
+                    .setDescription(`${videos.map(video2 => `[**${++index} **] \`${video2.title}\``).join('\n')}`)
+		    .setFooter(`.A-GUYS Server`, `https://goo.gl/jHxBTt`);
                     msg.channel.sendEmbed(embed1).then(message =>{message.delete(15000)});	
 					// eslint-disable-next-line max-depth
 					try {
