@@ -13,6 +13,11 @@ const ffmpeg = require('ffmpeg');
 const PREFIX = process.env.PREFIX
 const client = new Discord.Client({ disableEveryone: true});
 
+
+client.commands = new Discord.Collection();
+
+client.aliases = new Discord.Collection();
+
 client.on('warn', console.warn);
 
 client.on('error', console.error);
@@ -22,10 +27,6 @@ client.on('ready', () => console.log('Yo this ready!'));
 client.on('disconnect', () => console.log('I just disconnected, making sure you know, I will reconnect now...'));
 
 client.on('reconnecting', () => console.log('I am reconnecting now!'));
-
-client.commands = new Discord.Collection();
-
-client.aliases = new Discord.Collection();
 
 let cmds = {
 	play: { cmd: 'play', a: ['p'] },
