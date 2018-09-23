@@ -173,12 +173,12 @@ client.on('message', async msg => {
 		let n = conv.toWords(i+1);
 		num = `:${n}:`
         }
-		text += `**[${++index}] -** ${serverQueue.songs[i].title} [\`\`${serverQueue.songs[i].duration}\`\`]\n`,`${serverQueue.songs[i].pic}`
+		text += `${serverQueue.songs[i].pic}**[${++index}] -** ${serverQueue.songs[i].title} [\`\`${serverQueue.songs[i].duration}\`\`]\n`
         }
         const embedqu = new Discord.RichEmbed()
         .setColor('BLACK')
-        .setAuthor(`.A-Queue`, `https://goo.gl/jHxBTt`)
-        .setTitle('**.A-Queue List :**')
+        .setAuthor(".A-Queue", `https://goo.gl/jHxBTt`)
+        .setTitle("**.A-Queue List :**")
         .addField('__Now Playing__  :musical_note: ' , `**${serverQueue.songs[0].title}**`,true)
         .addField(':musical_score:  __UP NEXT__ :musical_score: ' , `${text}`)
 	.setFooter(`${PREFIX}skipto [number]`);
@@ -330,70 +330,69 @@ function play(guild, song) {
 
 function embedFormat(queue) {
 
-  if(!queue || !queue.songs) {
-    return "No music playing\n\u23F9 "+bar(-1)+" "+volumeIcon(100);
-  } else if(!queue.playing) {
-    return "No music playing\n\u23F9 "+bar(-1)+" "+volumeIcon(queue.volume);
-  } else {
+	if(!queue || !queue.songs) {
+		return "No music playing\n\u23F9 "+bar(-1)+" "+volumeIcon(100);
+	} else if(!queue.playing) {
+		return "No music playing\n\u23F9 "+bar(-1)+" "+volumeIcon(queue.volume);
+	} else {
 
-    let progress = (queue.connection.dispatcher.time / queue.songs[0].msDur);
-    let prog = bar(progress);
-    let volIcon = volumeIcon(queue.volume);
-    let playIcon = (queue.connection.dispatcher.paused ? "\u23F8" : "\u25B6")
-    let dura = queue.songs[0].duration;
+		let progress = (queue.connection.dispatcher.time / queue.songs[0].msDur);
+		let prog = bar(progress);
+		let volIcon = volumeIcon(queue.volume);
+		let playIcon = (queue.connection.dispatcher.paused ? "\u23F8" : "\u25B6")
+		let dura = queue.songs[0].duration;
 
-    return playIcon + ' ' + prog + ' `[' + formatTime(queue.connection.dispatcher.time) + '/' + dura + ']`' + volIcon;
+		return playIcon + ' ' + prog + ' `[' + formatTime(queue.connection.dispatcher.time) + '/' + dura + ']`' + volIcon;
 
 
-  }
+	}
 
 }
 
 function formatTime(duration) {
-var milliseconds = parseInt((duration % 1000) / 100),
-seconds = parseInt((duration / 1000) % 60),
-minutes = parseInt((duration / (1000 * 60)) % 60),
-hours = parseInt((duration / (1000 * 60 * 60)) % 24);
+	var milliseconds = parseInt((duration % 1000) / 100),
+	seconds = parseInt((duration / 1000) % 60),
+	minutes = parseInt((duration / (1000 * 60)) % 60),
+	hours = parseInt((duration / (1000 * 60 * 60)) % 24);
 
-hours = (hours < 10) ? "0" + hours : hours;
-minutes = (minutes < 10) ? "0" + minutes : minutes;
-seconds = (seconds < 10) ? "0" + seconds : seconds;
+	hours = (hours < 10) ? "0" + hours : hours;
+	minutes = (minutes < 10) ? "0" + minutes : minutes;
+	seconds = (seconds < 10) ? "0" + seconds : seconds;
 
-return (hours > 0 ? hours + ":" : "") + minutes + ":" + seconds;
+	return (hours > 0 ? hours + ":" : "") + minutes + ":" + seconds;
 }
 
 function bar(precent) {
 
-  var str = '';
+	var str = '';
 
-  for (var i = 0; i < 12; i++) {
+	for (var i = 0; i < 12; i++) {
 
-    let pre = precent
-    let res = pre * 12;
+		let pre = precent
+		let res = pre * 12;
 
-    res = parseInt(res)
+		res = parseInt(res)
 
-    if(i == res){
-      str+="\uD83D\uDD18";
-    }
-    else {
-      str+="▬";
-    }
-  }
+		if(i == res){
+			str+="\uD83D\uDD18";
+		} else {
+			str+="▬";
+		}
+	}
 
-  return str;
+	return str;
 
 }
 
 function volumeIcon(volume) {
 
-  if(volume == 0)
-     return "\uD83D\uDD07";
- if(volume < 30)
-     return "\uD83D\uDD08";
- if(volume < 70)
-     return "\uD83D\uDD09";
- return "\uD83D\uDD0A";
+	if(volume == 0)
+		return "\uD83D\uDD07";
+	if(volume < 30)
+		return "\uD83D\uDD08";
+	if(volume < 70)
+		return "\uD83D\uDD09";
+		return "\uD83D\uDD0A";
 
 }
 
