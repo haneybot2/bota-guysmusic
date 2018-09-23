@@ -173,7 +173,7 @@ client.on('message', async msg => {
 		let n = conv.toWords(i+1);
 		num = `:${n}:`
         }
-		text += `${serverQueue.songs[i].pic}**[${++index}] -** ${serverQueue.songs[i].title} [\`\`${serverQueue.songs[i].duration}\`\`]\n`
+		text += `**[${++index}] -** ${serverQueue.songs[i].title} [\`\`${serverQueue.songs[i].duration}\`\`]\n`
         }
         const embedqu = new Discord.RichEmbed()
         .setColor('BLACK')
@@ -263,7 +263,6 @@ let dur = `${hrs}${min}${sec}`
 		id: video.id,
 		title: Util.escapeMarkdown(video.title),
 		duration: dur,
-		pic:`${video.thumbnails.high.url}`,
 		url: `https://www.youtube.com/watch?v=${video.id}`
 	};
 	if (!serverQueue) {
