@@ -104,8 +104,8 @@ client.on('message', async msg => {
 					let index = 0;
                     const embed1 = new Discord.RichEmbed()
                     .setColor('BLACK')
-                    .setAuthor(`.A-Music`, `https://goo.gl/jHxBTt`)
-                    .setTitle('**Song selection** :')
+                    .setAuthor(".A-Music", `https://goo.gl/jHxBTt`)
+                    .setTitle("**Song selection** :")
                     .setDescription(`${videos.map(video2 => `[**${++index} **] \`${video2.title}\``).join('\n')}`);
                     msg.channel.sendEmbed(embed1).then(message =>{message.delete(15000)});	
 					// eslint-disable-next-line max-depth
@@ -173,7 +173,7 @@ client.on('message', async msg => {
 		let n = conv.toWords(i+1);
 		num = `:${n}:`
         }
-		text += `**[${++index}] -** ${serverQueue.songs[i].title} [\`\`${serverQueue.songs[i].duration}\`\`]\n`
+		text += `**[${++index}] -** ${serverQueue.songs[i].title} [\`\`${serverQueue.songs[i].duration}\`\`]\n`,`${serverQueue.songs[i].pic}`
         }
         const embedqu = new Discord.RichEmbed()
         .setColor('BLACK')
@@ -263,7 +263,7 @@ let dur = `${hrs}${min}${sec}`
 		id: video.id,
 		title: Util.escapeMarkdown(video.title),
 		duration: dur,
-		eyad:`${video.thumbnails.high.url}`,
+		pic:`${video.thumbnails.high.url}`,
 		url: `https://www.youtube.com/watch?v=${video.id}`
 	};
 	if (!serverQueue) {
