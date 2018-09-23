@@ -259,16 +259,8 @@ let dur = `${hrs}${min}${sec}`
 		id: video.id,
 		title: Util.escapeMarkdown(video.title),
 		duration: dur,
-		url: `https://www.youtube.com/watch?v=${video.id}`,
 		eyad:`${video.thumbnails.high.url}`,
-		best:`${video.channel.title}`,
-		bees:`${video.raw.snippet.publishedAt}`,
-		shahd:`${video.raw.kind}`,
-		zg:`${video.raw.snippet.channelId}`,
-		views:`${video.raw.views}`,
-		like:`${video.raw.likeCount}`,
-		dislike:`${video.raw.dislikeCount}`,
-		hi:`${video.raw.id}`
+		url: `https://www.youtube.com/watch?v=${video.id}`
 	};
 	if (!serverQueue) {
 		const queueConstruct = {
