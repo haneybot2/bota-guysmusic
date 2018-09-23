@@ -3,20 +3,19 @@ const { Client, Util } = require('discord.js');
 const getYoutubeID = require('get-youtube-id');
 const fetchVideoInfo = require('youtube-info');
 const YouTube = require('simple-youtube-api');
-const youtube = new YouTube("AIzaSyAdORXg7UZUo7sePv97JyoDqtQVi3Ll0b8");
-const queue = new Map();
 const ytdl = require('ytdl-core');
 const gif = require('gif-search');
 const nodeopus = require('node-opus');
 const conv = require('number-to-words');
 const ffmpeg = require('ffmpeg');
-const PREFIX = process.env.PREFIX
+
 const client = new Discord.Client({ disableEveryone: true});
 
+const youtube = new YouTube("AIzaSyAdORXg7UZUo7sePv97JyoDqtQVi3Ll0b8");
 
-client.commands = new Discord.Collection();
+const queue = new Map();
 
-client.aliases = new Discord.Collection();
+const PREFIX = process.env.PREFIX
 
 client.on('warn', console.warn);
 
@@ -27,6 +26,10 @@ client.on('ready', () => console.log('Yo this ready!'));
 client.on('disconnect', () => console.log('I just disconnected, making sure you know, I will reconnect now...'));
 
 client.on('reconnecting', () => console.log('I am reconnecting now!'));
+
+client.commands = new Discord.Collection();
+
+client.aliases = new Discord.Collection();
 
 let cmds = {
 	play: { cmd: 'play', a: ['p'] },
