@@ -1,7 +1,7 @@
 {
-  "name": ".A-GUYS MusicBot",
+  "name": "A-GUYS MusicBot",
   "version": "1.0.0",
-  "description": ".A-GUYS Music Bot",
+  "description": "A-GUYS Music Bot",
   "main": "bot.js",
   "scripts": {
     "start": "node bot.js"
