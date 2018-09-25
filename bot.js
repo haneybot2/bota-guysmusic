@@ -31,6 +31,7 @@ client.commands = new Discord.Collection();
 
 client.aliases = new Discord.Collection();
 
+
 let cmds = {
 	play: { cmd: 'play', a: ['p'] },
 	stop: { cmd: 'stop', a: ['s'] },
@@ -43,6 +44,7 @@ let cmds = {
 	pause: { cmd: 'pause' },
 	resume: { cmd: 'resume' }
 };
+
 
 Object.keys(cmds).forEach(key => {
     	var value = cmds[key];
@@ -67,7 +69,6 @@ client.on('message', async msg => {
     const serverQueue = queue.get(msg.guild.id);
     const voiceChannel = msg.member.voiceChannel;
     const command = args2.shift().toLowerCase();
-
     var cmd = client.commands.get(command) || client.commands.get(client.aliases.get(command));
 
     if (cmd === 'play') {
@@ -250,9 +251,7 @@ client.on('message', async msg => {
 async function handleVideo(video, msg, voiceChannel, playlist = false) {
 	const serverQueue = queue.get(msg.guild.id);
 	const args = msg.content.slice(PREFIX.length).trim().split(/ +/g);
-	console.log(video);
 
-//	console.log('yao: ' + Util.escapeMarkdown(video.thumbnailUrl));
 
 let hrs = video.duration.hours == 1 ? (video.duration.hours > 9 ? `${video.duration.hours}:` : `0${video.duration.hours}:`) : '';
 let min = video.duration.minutes > 9 ? `${video.duration.minutes}:` : `0${video.duration.minutes}:`;
@@ -265,6 +264,7 @@ let dur = `${hrs}${min}${sec}`
 		duration: dur,
 		url: `https://www.youtube.com/watch?v=${video.id}`
 	};
+	
 	if (!serverQueue) {
 		const queueConstruct = {
 			textChannel: msg.channel,
@@ -324,7 +324,6 @@ function play(guild, song) {
 		.on('error', error => console.error(error));
 	dispatcher.setVolumeLogarithmic(serverQueue.volume / 150);
 
-
 }
 
 function embedFormat(queue) {
@@ -342,10 +341,7 @@ function embedFormat(queue) {
 		let dura = queue.songs[0].duration;
 
 		return playIcon + ' ' + prog + ' `[' + formatTime(queue.connection.dispatcher.time) + '/' + dura + ']`' + volIcon;
-
-
 	}
-
 }
 
 function formatTime(duration) {
@@ -362,14 +358,12 @@ function formatTime(duration) {
 }
 
 function bar(precent) {
-
 	var str = '';
 
 	for (var i = 0; i < 12; i++) {
 
 		let pre = precent
 		let res = pre * 12;
-
 		res = parseInt(res)
 
 		if(i == res){
@@ -378,9 +372,7 @@ function bar(precent) {
 			str+="▬";
 		}
 	}
-
 	return str;
-
 }
 
 function volumeIcon(volume) {
@@ -392,7 +384,6 @@ function volumeIcon(volume) {
 	if(volume < 70)
 		return "\uD83D\uDD09";
 		return "\uD83D\uDD0A";
-
 }
 
 client.login(process.env.BOT_TOKEN);
