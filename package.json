@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "Discord.js bot on Heroku",
   "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
   "dependencies": {
-    "node": "8.x",
     "discord.js": "^11.3.2",
     "ffmpeg": "^0.0.4",
     "ffmpeg-binaries": "^4.0.0",
@@ -21,6 +23,9 @@
     "simple-youtube-api": "^5.0.2",
     "youtube-info": "^1.2.0",
     "ytdl-core": "^0.21.1"
+  },
+  "engines": {
+    "node": "8.x"
   },
 
   "keywords": [
