@@ -105,7 +105,7 @@ client.on('message', async msg => {
 					let index = 0;
                     const embed1 = new Discord.RichEmbed()
                     .setColor('BLACK')
-                    .setAuthor(".A-Music", `https://goo.gl/jHxBTt`)
+                    .setAuthor("Music", msg.guild.iconURL)
                     .setTitle("**Song selection** :")
                     .setDescription(`${videos.map(video2 => `[**${++index} **] \`${video2.title}\``).join('\n')}`);
                     msg.channel.sendEmbed(embed1).then(message =>{message.delete(15000)});	
